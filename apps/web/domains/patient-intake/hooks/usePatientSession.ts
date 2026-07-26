@@ -22,6 +22,7 @@ export function usePatientSession(options: UsePatientSessionOptions = {}) {
   const [submitted, setSubmitted] = useState(false);
   const [bootstrapError, setBootstrapError] = useState<string | null>(null);
   const [bootstrapping, setBootstrapping] = useState(true);
+  const [resumed, setResumed] = useState(false);
 
   const createMutation = useCreateSession();
   const existingQuery = useSession(storedId);
@@ -98,6 +99,7 @@ export function usePatientSession(options: UsePatientSessionOptions = {}) {
     const session = existingQuery.data;
     if (!session) return;
 
+    setResumed(true);
     setSessionId(session.id);
     if (appliedIdRef.current !== session.id) {
       appliedIdRef.current = session.id;
@@ -120,6 +122,7 @@ export function usePatientSession(options: UsePatientSessionOptions = {}) {
   return {
     sessionId,
     bootstrapping,
+    resumed,
     submitted,
     setSubmitted,
     bootstrapError,

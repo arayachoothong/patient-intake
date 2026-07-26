@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { type FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type FieldPath, useForm } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle, Form } from "@patient/ui";
@@ -13,6 +13,7 @@ import {
 } from "@patient/validation";
 import { useSubmitSession } from "@/domains/session/client";
 import { getFormDefaults, toPatchData } from "../helpers/form-defaults.helper";
+import { shouldShowResumeBanner, shouldSubmitOnFormEvent } from "../helpers/step-navigation.helper";
 import {
   SESSION_NOT_FOUND_STATUS,
   submitErrorMessage,
@@ -21,10 +22,7 @@ import {
 import { useDebouncedSessionSync } from "../hooks/useDebouncedSessionSync";
 import { useIntakeSteps } from "../hooks/useIntakeSteps";
 import { usePatientSession } from "../hooks/usePatientSession";
-import {
-  PATIENT_SESSION_STORAGE_KEY,
-  type PatientFormValues,
-} from "../interfaces/patient-form.interface";
+import { type PatientFormValues } from "../interfaces/patient-form.interface";
 import { ContactInformationSection } from "./ContactInformationSection";
 import { EmergencyContactsSection } from "./EmergencyContactsSection";
 import { FormBootstrapState } from "./FormBootstrapState";
@@ -39,7 +37,6 @@ export function PatientIntakeForm() {
   const [activeField, setActiveField] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [showResumeBanner, setShowResumeBanner] = useState(false);
-  const hadStoredSessionRef = useRef(false);
   const resumeAppliedRef = useRef(false);
 
   const form = useForm<PatientFormValues>({
@@ -48,10 +45,17 @@ export function PatientIntakeForm() {
     mode: "onSubmit",
   });
 
-  const { sessionId, bootstrapping, submitted, setSubmitted, bootstrapError, recreateSession } =
-    usePatientSession({
-      reset: form.reset,
-    });
+  const {
+    sessionId,
+    bootstrapping,
+    resumed,
+    submitted,
+    setSubmitted,
+    bootstrapError,
+    recreateSession,
+  } = usePatientSession({
+    reset: form.reset,
+  });
 
   const values = form.watch();
   const submitMutation = useSubmitSession();
@@ -114,19 +118,13 @@ export function PatientIntakeForm() {
   });
 
   useEffect(() => {
-    hadStoredSessionRef.current = Boolean(
-      window.sessionStorage.getItem(PATIENT_SESSION_STORAGE_KEY),
-    );
-  }, []);
-
-  useEffect(() => {
     if (bootstrapping || resumeAppliedRef.current) return;
     resumeAppliedRef.current = true;
-    if (!hadStoredSessionRef.current) return;
+    if (!shouldShowResumeBanner(resumed)) return;
 
     steps.goTo(resolveResumeStep(form.getValues()));
     setShowResumeBanner(true);
-  }, [bootstrapping, form, steps]);
+  }, [bootstrapping, form, resumed, steps]);
 
   const handleContinue = useCallback(async () => {
     if (steps.isLast) {
@@ -147,6 +145,19 @@ export function PatientIntakeForm() {
     await steps.goNext();
   }, [form, steps]);
 
+  const handleFormSubmit = useCallback(
+    (event: FormEvent<HTMLFormElement>) => {
+      if (shouldSubmitOnFormEvent(steps.step)) {
+        void onSubmit(event);
+        return;
+      }
+
+      event.preventDefault();
+      void handleContinue();
+    },
+    [handleContinue, onSubmit, steps.step],
+  );
+
   if (bootstrapping) {
     return <FormBootstrapState />;
   }
@@ -161,7 +172,7 @@ export function PatientIntakeForm() {
 
   return (
     <Form {...form}>
-      <form className="space-y-6" onSubmit={onSubmit} noValidate>
+      <form className="space-y-6" onSubmit={handleFormSubmit} noValidate>
         <StepProgress step={steps.step} index={steps.index} total={steps.total} />
         {showResumeBanner ? <ResumeBanner /> : null}
 
