@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { PublicEnvScript } from "next-runtime-env";
-import { IBM_Plex_Sans, Source_Sans_3 } from "next/font/google";
+import { Fraunces, Source_Sans_3 } from "next/font/google";
 import { QueryProvider } from "@/lib/http/QueryProvider";
 import "./globals.css";
 
@@ -10,10 +10,9 @@ const sourceSans = Source_Sans_3({
   display: "swap",
 });
 
-const ibmPlex = IBM_Plex_Sans({
+const fraunces = Fraunces({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-ibm-plex",
+  variable: "--font-display",
   display: "swap",
 });
 
@@ -28,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${sourceSans.variable} ${ibmPlex.variable}`}>
+    <html lang="en" className={`${sourceSans.variable} ${fraunces.variable}`}>
       <head>
         <PublicEnvScript />
       </head>

@@ -10,7 +10,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ["var(--font-source-sans)", "system-ui", "sans-serif"],
-        display: ["var(--font-ibm-plex)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "system-ui", "serif"],
       },
       borderRadius: {
         lg: "var(--radius)",
