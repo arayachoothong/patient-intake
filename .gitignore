@@ -10,3 +10,6 @@ dist
 # Local agent brainstorming — never push
 docs/superpowers/
 .superpowers/
+
+# Local git worktrees
+.worktrees/
