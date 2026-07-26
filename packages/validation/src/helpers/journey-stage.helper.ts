@@ -5,10 +5,13 @@ export type JourneyStage = "new" | "filling" | "ready";
 export function journeyStage(input: {
   status: SessionStatus;
   progress: number;
-}): JourneyStage {
+}): JourneyStage | null {
   if (input.status === SessionStatus.Submitted) return "ready";
-  if (input.progress <= 0) return "new";
-  return "filling";
+  if (input.status === SessionStatus.Filling) {
+    if (input.progress <= 0) return "new";
+    return "filling";
+  }
+  return null;
 }
 
 export function journeyStageLabel(stage: JourneyStage): string {

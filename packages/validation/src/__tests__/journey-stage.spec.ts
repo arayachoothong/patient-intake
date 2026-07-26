@@ -18,6 +18,14 @@ describe("journeyStage", () => {
   it("maps filling with progress to filling", () => {
     expect(journeyStage({ status: SessionStatus.Filling, progress: 17 })).toBe("filling");
   });
+
+  it("returns null for abandoned with zero progress", () => {
+    expect(journeyStage({ status: SessionStatus.Abandoned, progress: 0 })).toBeNull();
+  });
+
+  it("returns null for abandoned with progress", () => {
+    expect(journeyStage({ status: SessionStatus.Abandoned, progress: 42 })).toBeNull();
+  });
 });
 
 describe("journeyStage labels", () => {
