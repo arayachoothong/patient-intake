@@ -38,7 +38,7 @@ Route groups `(patient)` and `(staff)` do not appear in URLs. Pages import domai
 
 **Env:** put keys in **`apps/web/.env.local`** only. Native Next loads env from the app directory; a repo-root `.env.local` is ignored. Browser public vars use `next-runtime-env` (`PublicEnvScript` + `env()`); server publish uses `process.env.ABLY_API_KEY`. There is no custom `next.config` env loader.
 
-## Design notes
+## Design
 
 ### Patient vs staff UX
 
@@ -46,6 +46,17 @@ Route groups `(patient)` and `(staff)` do not appear in URLs. Pages import domai
 | ---------------------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Patient** `(patient)/layout.tsx` | Calm check-in chrome, form-focused width | Single scrollable page with sections (Personal, Contact, Preferences, Emergency contacts). React Hook Form + shadcn Form; debounced axios PATCH while typing; add/remove emergency contacts (1–3). |
 | **Staff** `(staff)/layout.tsx`     | Dark sidebar + main pane (`StaffShell`)  | Sidebar nav item **Patient**. `/staff` is a table (Name · Status · Progress · Updated). Detail is read-only, mirrors field definitions + `emergencyContacts[]`, highlights `activeField` + typing. |
+
+### Responsive behavior
+
+| Surface           | Mobile                                                                     | Desktop                                                       |
+| ----------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| **Patient**       | Single-column stacked sections; full-width inputs; comfortable tap targets | Form constrained to a readable max width in the patient shell |
+| **Staff shell**   | shadcn `Sidebar` collapses; open via `SidebarTrigger` (sheet overlay)      | Persistent dark sidebar + main `SidebarInset`                 |
+| **Patient table** | Horizontal scroll if needed; row tap opens detail                          | Full columns: Name · Status · Progress · Updated              |
+| **Staff detail**  | Stacked cards / field grids; back link to Patient list                     | Same content in a wider main pane                             |
+
+No separate mobile routes — one App Router tree adapts via Tailwind + shadcn Sidebar primitives.
 
 ### Clinic flow (demo)
 
@@ -109,7 +120,7 @@ Staff detail: `PatientLiveView` → section/card components + `FieldHighlight` f
 - `Xxx.tsx` — UI under `components/` or `@patient/ui`
 - Tests: `*.spec.ts` (Vitest)
 
-## Realtime sync flow
+## Realtime synchronization flow
 
 ### Sequence
 
@@ -179,7 +190,13 @@ Server publish: `publishToQueue` / `publishToSession` in `domains/session/infras
 
 ### Persistence caveat
 
-The store is process-local. Cold starts on Vercel empty the Map; see README **Known limitation**. Realtime events still work for concurrent viewers on the **same** warm instance, but durability requires a future database.
+Sessions live in a **process-local in-memory `Map`** (`domains/session/infrastructure/memory-store.ts`). That is an **intentional frontend-takehome tradeoff**, not an unfinished backend.
+
+- **Local `pnpm dev`:** the Node process keeps sessions for the life of the server.
+- **Vercel:** serverless cold starts, redeploys, or a different instance can empty the Map — the Patient table may reset.
+- **Realtime:** Ably still fans out `session.*` events to clients on the **same warm instance**; treat Ably as the notification layer, not the source of truth for durable storage.
+
+Demo tip: open patient `/` and staff `/staff` together and complete the flow in one continuous session. See README **Known limitation**.
 
 ## Quality gates
 
