@@ -14,7 +14,11 @@ import {
 } from "@patient/validation";
 import { useSubmitSession } from "@/domains/session/client";
 import { getFormDefaults, toPatchData } from "../helpers/form-defaults.helper";
-import { shouldShowResumeBanner, shouldSubmitOnFormEvent } from "../helpers/step-navigation.helper";
+import {
+  shouldRedirectSubmittedSession,
+  shouldShowResumeBanner,
+  shouldSubmitOnFormEvent,
+} from "../helpers/step-navigation.helper";
 import {
   SESSION_NOT_FOUND_STATUS,
   submitErrorMessage,
@@ -122,13 +126,19 @@ export function PatientIntakeForm() {
   });
 
   useEffect(() => {
-    if (bootstrapping || resumeAppliedRef.current) return;
+    if (shouldRedirectSubmittedSession(bootstrapping, submitted)) {
+      router.replace("/success");
+    }
+  }, [bootstrapping, router, submitted]);
+
+  useEffect(() => {
+    if (bootstrapping || submitted || resumeAppliedRef.current) return;
     resumeAppliedRef.current = true;
     if (!shouldShowResumeBanner(resumed)) return;
 
     steps.goTo(resolveResumeStep(form.getValues()));
     setShowResumeBanner(true);
-  }, [bootstrapping, form, resumed, steps]);
+  }, [bootstrapping, form, resumed, steps, submitted]);
 
   const handleContinue = useCallback(async () => {
     if (steps.isLast) {
@@ -162,11 +172,11 @@ export function PatientIntakeForm() {
     [handleContinue, onSubmit, steps.step],
   );
 
-  if (bootstrapping) {
+  if (bootstrapping || submitted) {
     return <FormBootstrapState />;
   }
 
-  const disabled = submitted || isSubmitting;
+  const disabled = isSubmitting;
   const errorMessage = submitError ?? bootstrapError;
   const sectionProps = {
     disabled,

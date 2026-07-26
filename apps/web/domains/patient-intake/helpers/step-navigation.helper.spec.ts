@@ -3,6 +3,7 @@ import { IntakeStep } from "@patient/validation";
 import {
   nextStep,
   prevStep,
+  shouldRedirectSubmittedSession,
   shouldShowResumeBanner,
   shouldSubmitOnFormEvent,
   stepIndex,
@@ -35,5 +36,11 @@ describe("step navigation", () => {
   it("shows the resume banner only after an existing session was restored", () => {
     expect(shouldShowResumeBanner(true)).toBe(true);
     expect(shouldShowResumeBanner(false)).toBe(false);
+  });
+
+  it("redirects a submitted session only after bootstrap completes", () => {
+    expect(shouldRedirectSubmittedSession(true, true)).toBe(false);
+    expect(shouldRedirectSubmittedSession(false, false)).toBe(false);
+    expect(shouldRedirectSubmittedSession(false, true)).toBe(true);
   });
 });

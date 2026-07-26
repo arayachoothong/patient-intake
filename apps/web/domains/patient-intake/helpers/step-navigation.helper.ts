@@ -20,3 +20,10 @@ export function shouldSubmitOnFormEvent(step: IntakeStep): boolean {
 export function shouldShowResumeBanner(resumed: boolean): boolean {
   return resumed;
 }
+
+export function shouldRedirectSubmittedSession(
+  bootstrapping: boolean,
+  submitted: boolean,
+): boolean {
+  return !bootstrapping && submitted;
+}
