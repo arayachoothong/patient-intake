@@ -6,7 +6,7 @@ import { PatientTableEmptyState } from "./PatientTableEmptyState";
 import { PatientTableErrorState } from "./PatientTableErrorState";
 import { PatientTableHeader } from "./PatientTableHeader";
 import { PatientTableLoadingState } from "./PatientTableLoadingState";
-import { PatientTableRow } from "./PatientTableRow";
+import { PatientMobileRow, PatientTableRow } from "./PatientTableRow";
 import { StaffPageHeader } from "./StaffPageHeader";
 
 export function PatientTable() {
@@ -22,15 +22,22 @@ export function PatientTable() {
         ) : error && sessions.length === 0 ? null : sessions.length === 0 ? (
           <PatientTableEmptyState />
         ) : (
-          <div className="bg-background rounded-lg border">
-            <Table>
-              <PatientTableHeader />
-              <TableBody>
-                {sessions.map((session) => (
-                  <PatientTableRow key={session.id} session={session} />
-                ))}
-              </TableBody>
-            </Table>
+          <div>
+            <div className="space-y-3 md:hidden">
+              {sessions.map((session) => (
+                <PatientMobileRow key={session.id} session={session} />
+              ))}
+            </div>
+            <div className="bg-background hidden overflow-hidden rounded-lg border md:block">
+              <Table>
+                <PatientTableHeader />
+                <TableBody>
+                  {sessions.map((session) => (
+                    <PatientTableRow key={session.id} session={session} />
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </div>
         )}
       </div>
