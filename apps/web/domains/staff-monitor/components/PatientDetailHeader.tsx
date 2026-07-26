@@ -8,6 +8,7 @@ import {
   type ConnectionState,
 } from "@patient/ui";
 import {
+  checkInCode,
   SessionStatus,
   sessionStatusLabel,
   sessionStatusVariant,
@@ -28,16 +29,19 @@ export function PatientDetailHeader({ session, connectionState }: PatientDetailH
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0 space-y-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className="font-display text-xl font-semibold text-slate-900">
+            <h2 className="font-display text-xl font-semibold text-stone-900">
               {sessionDisplayName(session)}
             </h2>
             <Badge variant={sessionStatusVariant(session.status)}>
               {sessionStatusLabel(session.status)}
             </Badge>
           </div>
-          <p className="font-mono text-xs text-slate-500">{session.id}</p>
+          <p className="font-mono text-sm font-semibold tracking-wide text-amber-900">
+            Check-in {checkInCode(session.id)}
+          </p>
+          <p className="font-mono text-[11px] text-stone-400">{session.id}</p>
         </div>
-        <ConnectionStatus state={connectionState} />
+        {submitted ? null : <ConnectionStatus state={connectionState} />}
       </div>
       {submitted ? (
         <Alert>
