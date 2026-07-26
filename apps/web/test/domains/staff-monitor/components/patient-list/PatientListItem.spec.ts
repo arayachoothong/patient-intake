@@ -1,6 +1,6 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { SessionStatus, type Session } from "@patient/validation";
+import { IntakeStep, SessionStatus, type Session } from "@patient/validation";
 import { describe, expect, it, vi } from "vitest";
 import { PatientListItem } from "@/domains/staff-monitor/components/patient-list/PatientListItem";
 import { PatientListMobileItem } from "@/domains/staff-monitor/components/patient-list/PatientListMobileItem";
@@ -16,6 +16,7 @@ function session(overrides: Partial<Session> = {}): Session {
     createdAt: "2026-07-26T10:00:00.000Z",
     updatedAt: "2026-07-26T10:05:00.000Z",
     progress: 25,
+    currentStep: IntakeStep.Contact,
     activeField: null,
     isTyping: false,
     data: { firstName: "Ada", lastName: "Lovelace" },

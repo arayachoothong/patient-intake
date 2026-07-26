@@ -1,6 +1,6 @@
 import * as React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { checkInCode, Gender, SessionStatus, type Session } from "@patient/validation";
+import { checkInCode, Gender, IntakeStep, SessionStatus, type Session } from "@patient/validation";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { SessionSubscriptionState } from "@/domains/staff-monitor/interfaces/staff-subscription.interface";
 import { PatientLiveView } from "@/domains/staff-monitor/components/PatientLiveView";
@@ -20,6 +20,7 @@ function session(overrides: Partial<Session> = {}): Session {
     createdAt: "2026-07-26T10:00:00.000Z",
     updatedAt: "2026-07-26T10:05:00.000Z",
     progress: 75,
+    currentStep: IntakeStep.Preferences,
     activeField: "firstName",
     isTyping: true,
     data: {

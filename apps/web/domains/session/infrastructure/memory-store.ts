@@ -1,5 +1,6 @@
 import {
   ApiErrorCode,
+  IntakeStep,
   SessionStatus,
   computeProgress,
   patientIntakeSchema,
@@ -26,6 +27,7 @@ export function createSessionInStore(): Session {
     createdAt: now,
     updatedAt: now,
     progress: 0,
+    currentStep: IntakeStep.Personal,
     activeField: null,
     isTyping: false,
     data: {
@@ -59,6 +61,7 @@ export function patchSessionInStore(id: string, input: SessionPatchInput): Patch
     data,
     updatedAt: nowIso(),
     progress: computeProgress(data),
+    ...(input.currentStep !== undefined ? { currentStep: input.currentStep } : {}),
     ...(input.activeField !== undefined ? { activeField: input.activeField } : {}),
     ...(input.isTyping !== undefined ? { isTyping: input.isTyping } : {}),
   };

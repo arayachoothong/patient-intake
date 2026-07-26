@@ -24,7 +24,6 @@ export function intakeStepForSection(section: FormSection): IntakeStep {
   return STEP_BY_SECTION[section];
 }
 
-/** Review has no form section of its own. */
 export function formSectionForStep(step: IntakeStep): FormSection | null {
   return SECTION_BY_STEP[step];
 }

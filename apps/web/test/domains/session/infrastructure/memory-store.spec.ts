@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
+import { IntakeStep } from "@patient/validation";
 import { _resetStoreForTests } from "@/domains/session/infrastructure/memory-store";
 import { createSession } from "@/domains/session/use-cases/create-session";
 import { getSession } from "@/domains/session/use-cases/get-session";
@@ -15,6 +16,7 @@ describe("session domain store", () => {
     const session = createSession();
     expect(session.status).toBe("filling");
     expect(session.progress).toBe(0);
+    expect(session.currentStep).toBe(IntakeStep.Personal);
     expect(session.data.emergencyContacts).toEqual([{ name: "", relation: "", phone: "" }]);
     expect(listSessions()).toHaveLength(1);
   });
@@ -31,6 +33,15 @@ describe("session domain store", () => {
       expect(updated.progress).toBe(17);
       expect(updated.activeField).toBe("firstName");
       expect(updated.isTyping).toBe(true);
+    }
+  });
+
+  it("patches currentStep when the patient advances", () => {
+    const session = createSession();
+    const updated = patchSession(session.id, { currentStep: IntakeStep.Review });
+    expect("error" in updated).toBe(false);
+    if (!("error" in updated)) {
+      expect(updated.currentStep).toBe(IntakeStep.Review);
     }
   });
 

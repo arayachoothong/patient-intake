@@ -9,6 +9,7 @@ type StepActionsProps = {
   isSubmitting?: boolean;
   onBack: () => void;
   onContinue: () => void | Promise<void>;
+  onSubmit: () => void | Promise<void>;
 };
 
 export function StepActions({
@@ -18,6 +19,7 @@ export function StepActions({
   isSubmitting,
   onBack,
   onContinue,
+  onSubmit,
 }: StepActionsProps) {
   return (
     <div className="sticky bottom-0 z-10 -mx-4 flex gap-3 border-t bg-white/95 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4 backdrop-blur md:static md:mx-0 md:justify-end md:border-0 md:bg-transparent md:p-0">
@@ -31,9 +33,15 @@ export function StepActions({
         Back
       </Button>
       <Button
-        type={isReview ? "submit" : "button"}
+        type="button"
         disabled={disabled || isSubmitting}
-        onClick={isReview ? undefined : () => void onContinue()}
+        onClick={() => {
+          if (isReview) {
+            void onSubmit();
+            return;
+          }
+          void onContinue();
+        }}
         className="flex-1 md:flex-none"
       >
         {isReview ? (isSubmitting ? "Submitting…" : "Submit intake") : "Continue"}

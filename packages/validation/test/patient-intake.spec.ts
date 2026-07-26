@@ -30,6 +30,22 @@ describe("patientIntakeSchema", () => {
     expect(result.success).toBe(false);
   });
 
+  it("uses Please enter {label} for empty required fields", () => {
+    const result = patientIntakeSchema.safeParse({
+      ...validBase,
+      ...oneContact,
+      firstName: "",
+      email: "",
+      gender: "",
+    });
+    expect(result.success).toBe(false);
+    if (result.success) return;
+    const messages = result.error.issues.map((issue) => issue.message);
+    expect(messages).toContain("Please enter First name");
+    expect(messages).toContain("Please enter Email");
+    expect(messages).toContain("Please enter Gender");
+  });
+
   it("allows optional middleName and religion", () => {
     const result = patientIntakeSchema.safeParse({
       ...validBase,

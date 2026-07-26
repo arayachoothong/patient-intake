@@ -1,14 +1,16 @@
-import { SessionStatus } from "../constants/session-status.constant";
+import { IntakeStep } from "../constants/intake-step.constant";
 import { JourneyStage } from "../constants/journey-stage.constant";
+import { SessionStatus } from "../constants/session-status.constant";
 
 export function journeyStage(input: {
   status: SessionStatus;
   progress: number;
+  currentStep?: IntakeStep | null;
 }): JourneyStage | null {
   if (input.status === SessionStatus.Submitted) return JourneyStage.Ready;
   if (input.status === SessionStatus.Filling) {
     if (input.progress <= 0) return JourneyStage.New;
-    if (input.progress >= 100) return JourneyStage.WaitingReview;
+    if (input.currentStep === IntakeStep.Review) return JourneyStage.WaitingReview;
     return JourneyStage.Filling;
   }
   return null;

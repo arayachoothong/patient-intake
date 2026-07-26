@@ -67,9 +67,14 @@ export function PatientIntakeForm() {
   const submitMutation = useSubmitSession();
   const isSubmitting = form.formState.isSubmitting || submitMutation.isPending;
 
+  const steps = useIntakeSteps();
+  const stepRef = useRef(steps.step);
+  stepRef.current = steps.step;
+
   useDebouncedSessionSync({
     sessionId,
     data: toPatchData(values),
+    currentStep: steps.step,
     activeField,
     enabled: Boolean(sessionId) && !submitted && !bootstrapping,
   });
@@ -82,7 +87,8 @@ export function PatientIntakeForm() {
     setActiveField(null);
   }, []);
 
-  const onSubmit = form.handleSubmit((raw) => {
+  const submitIntake = form.handleSubmit((raw) => {
+    if (stepRef.current !== IntakeStep.Review) return;
     if (!sessionId || submitted) return;
     setSubmitError(null);
 
@@ -120,10 +126,6 @@ export function PatientIntakeForm() {
     );
   });
 
-  const steps = useIntakeSteps({
-    onSubmitReview: () => onSubmit(),
-  });
-
   useEffect(() => {
     if (shouldRedirectSubmittedSession(bootstrapping, submitted)) {
       router.replace("/success");
@@ -132,18 +134,18 @@ export function PatientIntakeForm() {
 
   useEffect(() => {
     if (bootstrapping || submitted || resumeAppliedRef.current) return;
-    resumeAppliedRef.current = true;
-    if (!shouldShowResumeBanner(resumed)) return;
+    if (!shouldShowResumeBanner(resumed)) {
+      resumeAppliedRef.current = true;
+      return;
+    }
 
+    resumeAppliedRef.current = true;
     steps.goTo(resolveResumeStep(form.getValues()));
     setShowResumeBanner(true);
   }, [bootstrapping, form, resumed, steps, submitted]);
 
-  const handleContinue = useCallback(async () => {
-    if (steps.isLast) {
-      await steps.goNext();
-      return;
-    }
+  const handleContinue = useCallback(() => {
+    if (steps.step === IntakeStep.Review) return;
 
     const result = intakeStepSchema(steps.step).safeParse(form.getValues());
     if (!result.success) {
@@ -155,20 +157,21 @@ export function PatientIntakeForm() {
     }
 
     form.clearErrors();
-    await steps.goNext();
+    steps.goNext();
   }, [form, steps]);
 
   const handleFormSubmit = useCallback(
     (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+
       if (shouldSubmitOnFormEvent(steps.step)) {
-        void onSubmit(event);
+        void submitIntake();
         return;
       }
 
-      event.preventDefault();
-      void handleContinue();
+      handleContinue();
     },
-    [handleContinue, onSubmit, steps.step],
+    [handleContinue, steps.step, submitIntake],
   );
 
   if (bootstrapping || submitted) {
@@ -203,11 +206,12 @@ export function PatientIntakeForm() {
         <SubmitErrorMessage message={errorMessage} />
         <StepActions
           isFirst={steps.isFirst}
-          isReview={steps.isLast}
+          isReview={steps.step === IntakeStep.Review}
           disabled={!sessionId || disabled}
           isSubmitting={isSubmitting}
           onBack={steps.goBack}
           onContinue={handleContinue}
+          onSubmit={submitIntake}
         />
       </form>
     </Form>

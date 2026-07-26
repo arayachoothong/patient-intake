@@ -1,5 +1,6 @@
 import { FieldName } from "../constants/field-name.constant";
 import { LANGUAGE_OPTIONS } from "../constants/language.constant";
+import { formatPhoneDisplay } from "../contact-rules";
 import type { PatientIntake } from "../patient-intake";
 
 export function formatGenderLabel(value: string): string {
@@ -34,6 +35,9 @@ export function formatFieldDisplayValue(
   }
   if (fieldName === FieldName.PreferredLanguage) {
     return formatLanguageLabel(raw);
+  }
+  if (fieldName === FieldName.PhoneNumber) {
+    return formatPhoneDisplay(raw);
   }
   return raw;
 }

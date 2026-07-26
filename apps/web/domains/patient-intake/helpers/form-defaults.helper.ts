@@ -64,7 +64,6 @@ export function sessionDataToFormValues(data: Partial<PatientIntake>): PatientFo
   };
 }
 
-/** Form values as session-shaped data for read-only display (drops the empty gender placeholder). */
 export function toDisplayData(values: PatientFormValues): Partial<PatientIntake> {
   const { gender, ...rest } = values;
   return gender === "" ? rest : { ...rest, gender };

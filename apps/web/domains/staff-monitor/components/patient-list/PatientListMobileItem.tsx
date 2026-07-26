@@ -19,7 +19,11 @@ type PatientListMobileItemProps = {
 export function PatientListMobileItem({ session }: PatientListMobileItemProps) {
   const { href, navigate, onKeyDown } = usePatientRowNavigation(session.id);
   const isReady =
-    journeyStage({ status: session.status, progress: session.progress }) === JourneyStage.Ready;
+    journeyStage({
+      status: session.status,
+      progress: session.progress,
+      currentStep: session.currentStep,
+    }) === JourneyStage.Ready;
 
   return (
     <article

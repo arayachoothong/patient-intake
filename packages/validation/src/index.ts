@@ -23,3 +23,4 @@ export * from "./helpers/check-in-code.helper";
 export * from "./helpers/journey-stage.helper";
 export * from "./helpers/intake-step.helper";
 export * from "./helpers/format-submitted-at.helper";
+export * from "./helpers/required-message.helper";

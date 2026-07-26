@@ -68,7 +68,7 @@ No separate mobile routes — one App Router tree adapts via Tailwind + shadcn S
 5. Patient submits from Review → full Zod validation → internal `status: submitted` → redirect to `/success`, which shows the receipt and display-only check-in code. Further PATCH returns **409**.
 6. Staff presents submitted sessions as **Ready** and replaces the live detail with the submitted receipt and matching check-in code.
 
-Journey stages are presentation derived from existing data: `filling` + 0% → **New**, `filling` + progress → **Filling**, `filling` + 100% (on Review, not submitted) → **Waiting for review**, and `submitted` → **Ready**. Persistent session statuses remain `filling` | `submitted` | `abandoned`; no new backend statuses were added (timeout → `abandoned` remains reserved for optional bonus C).
+Journey stages are presentation derived from existing data: `filling` + 0% → **New**, `filling` + progress (any step before Review) → **Filling**, `filling` + `currentStep === review` (not submitted) → **Waiting for review**, and `submitted` → **Ready**. Persistent session statuses remain `filling` | `submitted` | `abandoned`; no new backend statuses were added (timeout → `abandoned` remains reserved for optional bonus C).
 
 ### Emergency contacts shape
 

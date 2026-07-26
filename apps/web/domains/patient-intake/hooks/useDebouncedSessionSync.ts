@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import type { PatientIntakePartial } from "@patient/validation";
+import type { IntakeStep, PatientIntakePartial } from "@patient/validation";
 import { usePatchSession } from "@/domains/session/client";
 
 const DEBOUNCE_MS = 250;
@@ -10,6 +10,7 @@ const IDLE_MS = 800;
 type UseDebouncedSessionSyncArgs = {
   sessionId: string | null;
   data: PatientIntakePartial;
+  currentStep: IntakeStep;
   activeField: string | null;
   enabled: boolean;
 };
@@ -17,6 +18,7 @@ type UseDebouncedSessionSyncArgs = {
 export function useDebouncedSessionSync({
   sessionId,
   data,
+  currentStep,
   activeField,
   enabled,
 }: UseDebouncedSessionSyncArgs): void {
@@ -27,10 +29,18 @@ export function useDebouncedSessionSync({
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const idleRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const skipFirstRef = useRef(true);
-  const latestRef = useRef({ data, activeField });
-  latestRef.current = { data, activeField };
+  const latestRef = useRef({ data, currentStep, activeField });
+  latestRef.current = { data, currentStep, activeField };
 
   const dataKey = JSON.stringify(data);
+
+  useEffect(() => {
+    if (!enabled || !sessionId) return;
+    mutateRef.current({
+      id: sessionId,
+      body: { currentStep },
+    });
+  }, [sessionId, currentStep, enabled]);
 
   useEffect(() => {
     if (!enabled || !sessionId) {
@@ -50,6 +60,7 @@ export function useDebouncedSessionSync({
         id: sessionId,
         body: {
           data: latestRef.current.data,
+          currentStep: latestRef.current.currentStep,
           activeField: latestRef.current.activeField,
           isTyping: true,
         },
@@ -60,6 +71,7 @@ export function useDebouncedSessionSync({
       mutateRef.current({
         id: sessionId,
         body: {
+          currentStep: latestRef.current.currentStep,
           activeField: latestRef.current.activeField,
           isTyping: false,
         },

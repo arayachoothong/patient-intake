@@ -33,6 +33,12 @@ describe("step navigation", () => {
     expect(shouldSubmitOnFormEvent(IntakeStep.Review)).toBe(true);
   });
 
+  it("advances Contact to Preferences, not past Review", () => {
+    expect(nextStep(IntakeStep.Contact)).toBe(IntakeStep.Preferences);
+    expect(nextStep(IntakeStep.Emergency)).toBe(IntakeStep.Review);
+    expect(nextStep(IntakeStep.Review)).toBeNull();
+  });
+
   it("shows the resume banner only after an existing session was restored", () => {
     expect(shouldShowResumeBanner(true)).toBe(true);
     expect(shouldShowResumeBanner(false)).toBe(false);

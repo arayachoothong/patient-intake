@@ -6,23 +6,15 @@ import { nextStep, prevStep, stepIndex } from "../helpers/step-navigation.helper
 
 type UseIntakeStepsOptions = {
   initialStep?: IntakeStep;
-  onSubmitReview: () => void | Promise<void>;
 };
 
-export function useIntakeSteps({
-  initialStep = IntakeStep.Personal,
-  onSubmitReview,
-}: UseIntakeStepsOptions) {
+export function useIntakeSteps({ initialStep = IntakeStep.Personal }: UseIntakeStepsOptions = {}) {
   const [step, setStep] = useState<IntakeStep>(initialStep);
 
-  const goNext = useCallback(async () => {
+  const goNext = useCallback(() => {
     const next = nextStep(step);
-    if (next) {
-      setStep(next);
-      return;
-    }
-    await onSubmitReview();
-  }, [onSubmitReview, step]);
+    if (next) setStep(next);
+  }, [step]);
 
   const goBack = useCallback(() => {
     const previous = prevStep(step);

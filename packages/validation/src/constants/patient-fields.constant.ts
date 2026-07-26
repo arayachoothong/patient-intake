@@ -90,13 +90,13 @@ export const FIELD_DEFINITIONS: readonly FieldDefinition[] = [
   },
 ] as const;
 
-/** Fields shown on the patient-facing check-in receipt, in display order. */
 export const RECEIPT_SUMMARY_FIELDS = [
   FieldName.FirstName,
   FieldName.LastName,
   FieldName.DateOfBirth,
   FieldName.Gender,
   FieldName.PhoneNumber,
+  FieldName.Email,
   FieldName.PreferredLanguage,
 ] as const;
 

@@ -20,6 +20,7 @@ export function StageBadge({ session }: StageBadgeProps) {
   const stage = journeyStage({
     status: session.status,
     progress: session.progress,
+    currentStep: session.currentStep,
   });
 
   return (

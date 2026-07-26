@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { IntakeStep } from "../src/constants/intake-step.constant";
 import { JourneyStage } from "../src/constants/journey-stage.constant";
 import { SessionStatus } from "../src/constants/session-status.constant";
 import {
@@ -24,10 +25,38 @@ describe("journeyStage", () => {
     );
   });
 
-  it("maps filling at full progress to waiting for review", () => {
-    expect(journeyStage({ status: SessionStatus.Filling, progress: 100 })).toBe(
-      JourneyStage.WaitingReview,
-    );
+  it("keeps filling at 100% progress when not on Review (e.g. emergency contacts)", () => {
+    expect(
+      journeyStage({
+        status: SessionStatus.Filling,
+        progress: 100,
+        currentStep: IntakeStep.Emergency,
+      }),
+    ).toBe(JourneyStage.Filling);
+    expect(
+      journeyStage({
+        status: SessionStatus.Filling,
+        progress: 100,
+        currentStep: IntakeStep.Contact,
+      }),
+    ).toBe(JourneyStage.Filling);
+  });
+
+  it("maps filling on Review step to waiting for review", () => {
+    expect(
+      journeyStage({
+        status: SessionStatus.Filling,
+        progress: 100,
+        currentStep: IntakeStep.Review,
+      }),
+    ).toBe(JourneyStage.WaitingReview);
+    expect(
+      journeyStage({
+        status: SessionStatus.Filling,
+        progress: 75,
+        currentStep: IntakeStep.Review,
+      }),
+    ).toBe(JourneyStage.WaitingReview);
   });
 
   it("returns null for abandoned with zero progress", () => {

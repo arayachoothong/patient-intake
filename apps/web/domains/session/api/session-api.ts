@@ -1,4 +1,9 @@
-import type { PatientIntake, PatientIntakePartial, Session } from "@patient/validation";
+import type {
+  IntakeStep,
+  PatientIntake,
+  PatientIntakePartial,
+  Session,
+} from "@patient/validation";
 import { api } from "@/lib/http/axios-client";
 
 export async function listSessions(): Promise<Session[]> {
@@ -16,10 +21,14 @@ export async function createSession(): Promise<Session> {
   return data;
 }
 
-export async function patchSession(
-  id: string,
-  body: { data?: PatientIntakePartial; activeField?: string | null; isTyping?: boolean },
-): Promise<Session> {
+export type SessionPatchBody = {
+  data?: PatientIntakePartial;
+  currentStep?: IntakeStep;
+  activeField?: string | null;
+  isTyping?: boolean;
+};
+
+export async function patchSession(id: string, body: SessionPatchBody): Promise<Session> {
   const { data } = await api.patch<Session>(`/api/sessions/${id}`, body);
   return data;
 }
