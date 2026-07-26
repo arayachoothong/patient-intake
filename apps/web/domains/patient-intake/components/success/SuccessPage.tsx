@@ -60,21 +60,21 @@ export function SuccessPage() {
 
   return (
     <div className="py-8 sm:py-12">
-      <article className="motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-3 overflow-hidden rounded-[2rem] border border-amber-100 bg-stone-50/95 shadow-[0_24px_70px_-35px_rgba(120,83,45,0.35)] motion-safe:duration-700">
-        <header className="bg-gradient-to-br from-amber-100 via-amber-50 to-stone-100 px-6 py-9 sm:px-10 sm:py-11">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-800">
+      <article className="motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-3 overflow-hidden rounded-[2rem] border border-blue-100 bg-slate-50/95 shadow-[0_24px_70px_-35px_rgba(37,99,235,0.35)] motion-safe:duration-700">
+        <header className="bg-gradient-to-br from-blue-100 via-blue-50 to-slate-100 px-6 py-9 sm:px-10 sm:py-11">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-800">
             Check-in complete
           </p>
-          <h1 className="mt-3 text-4xl font-semibold tracking-tight text-stone-950 sm:text-5xl">
+          <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
             You’re checked in
           </h1>
-          <p className="mt-3 max-w-lg text-base leading-7 text-stone-600">
+          <p className="mt-3 max-w-lg text-base leading-7 text-slate-600">
             Keep this page handy while you wait.
           </p>
           <FrontDeskCue status={session.status} />
-          <div className="mt-7 inline-flex items-center rounded-full border border-amber-300/70 bg-white/75 px-4 py-2 font-mono text-sm tracking-wide text-stone-700">
+          <div className="mt-7 inline-flex items-center rounded-full border border-blue-300/70 bg-white/75 px-4 py-2 font-mono text-sm tracking-wide text-slate-700">
             Check-in code
-            <span className="ml-2 font-bold text-amber-900">{checkInCode(session.id)}</span>
+            <span className="ml-2 font-bold text-blue-900">{checkInCode(session.id)}</span>
           </div>
         </header>
 

@@ -19,7 +19,7 @@ export function StepProgress({ step, index, total }: StepProgressProps) {
           Step {index + 1} of {total} · {INTAKE_STEP_TITLES[step]}
         </p>
         <div
-          className="h-1.5 overflow-hidden rounded-full bg-stone-200"
+          className="h-1.5 overflow-hidden rounded-full bg-slate-200"
           role="progressbar"
           aria-valuemin={1}
           aria-valuemax={total}

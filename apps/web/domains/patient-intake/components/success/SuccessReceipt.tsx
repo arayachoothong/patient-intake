@@ -16,12 +16,12 @@ export function SuccessReceipt({ data, submittedAt }: SuccessReceiptProps) {
     .join(", ");
 
   return (
-    <section aria-labelledby="receipt-title" className="border-y border-stone-200 py-7 sm:py-8">
+    <section aria-labelledby="receipt-title" className="border-y border-slate-200 py-7 sm:py-8">
       <div className="mb-6 flex flex-wrap items-baseline justify-between gap-2">
-        <h2 id="receipt-title" className="text-xl font-semibold tracking-tight text-stone-900">
+        <h2 id="receipt-title" className="text-xl font-semibold tracking-tight text-slate-900">
           Check-in receipt
         </h2>
-        <p className="text-sm text-stone-500">Submitted {formatSubmittedAt(submittedAt)}</p>
+        <p className="text-sm text-slate-500">Submitted {formatSubmittedAt(submittedAt)}</p>
       </div>
 
       <ReceiptFieldList

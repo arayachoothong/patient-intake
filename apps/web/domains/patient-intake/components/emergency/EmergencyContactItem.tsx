@@ -1,7 +1,6 @@
 "use client";
 
 import { EmergencyContactFieldList } from "./EmergencyContactFieldList";
-import { RemoveContactButton } from "./RemoveContactButton";
 
 type EmergencyContactItemProps = {
   index: number;
@@ -21,14 +20,13 @@ export function EmergencyContactItem({
   onBlurField,
 }: EmergencyContactItemProps) {
   return (
-    <div className="space-y-2">
-      <EmergencyContactFieldList
-        index={index}
-        disabled={disabled}
-        onFocusField={onFocusField}
-        onBlurField={onBlurField}
-      />
-      <RemoveContactButton disabled={disabled || !canRemove} onClick={onRemove} />
-    </div>
+    <EmergencyContactFieldList
+      index={index}
+      disabled={disabled}
+      canRemove={canRemove}
+      onRemove={onRemove}
+      onFocusField={onFocusField}
+      onBlurField={onBlurField}
+    />
   );
 }

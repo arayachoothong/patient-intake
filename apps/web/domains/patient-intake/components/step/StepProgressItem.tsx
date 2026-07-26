@@ -14,7 +14,7 @@ export function StepProgressItem({ step, currentStep, reached }: StepProgressIte
       className={reached ? "text-foreground" : "text-muted-foreground"}
       aria-current={step === currentStep ? "step" : undefined}
     >
-      <div className={`mb-2 h-1.5 rounded-full ${reached ? "bg-primary" : "bg-stone-200"}`} />
+      <div className={`mb-2 h-1.5 rounded-full ${reached ? "bg-primary" : "bg-slate-200"}`} />
       <span className="text-xs font-medium">{INTAKE_STEP_TITLES[step]}</span>
     </li>
   );

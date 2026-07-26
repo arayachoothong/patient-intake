@@ -27,10 +27,10 @@ export function PatientShellHeader() {
     <header className="mx-auto w-full max-w-2xl px-4 pb-6 pt-10 sm:px-6 sm:pb-8 sm:pt-14">
       <div className="flex flex-col items-start gap-5">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-700">
             Meridian Clinic
           </p>
-          <h1 className="font-display mt-2 text-3xl font-semibold tracking-tight text-stone-900 sm:text-4xl">
+          <h1 className="font-display mt-2 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
             Patient check-in
           </h1>
           <p className="text-muted-foreground mt-2 text-base">

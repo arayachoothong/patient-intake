@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import { StepProgress } from "@/domains/patient-intake/components/step/StepProgress";
 
 describe("StepProgress", () => {
-  it("uses the warm patient palette without teal or slate utilities", () => {
+  it("uses semantic primary tokens without amber utilities", () => {
     const markup = renderToStaticMarkup(
       createElement(StepProgress, {
         step: IntakeStep.Contact,
@@ -16,6 +16,6 @@ describe("StepProgress", () => {
 
     expect(markup).toContain("bg-primary");
     expect(markup).toContain("text-foreground");
-    expect(markup).not.toMatch(/(?:teal|slate)-/);
+    expect(markup).not.toMatch(/amber-/);
   });
 });

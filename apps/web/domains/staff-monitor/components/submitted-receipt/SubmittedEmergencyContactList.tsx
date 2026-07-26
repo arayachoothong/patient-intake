@@ -9,7 +9,7 @@ type SubmittedEmergencyContactListProps = {
 
 export function SubmittedEmergencyContactList({ contacts }: SubmittedEmergencyContactListProps) {
   if (contacts.length === 0) {
-    return <p className="mt-4 text-sm text-stone-500">No emergency contacts provided.</p>;
+    return <p className="mt-4 text-sm text-slate-500">No emergency contacts provided.</p>;
   }
 
   return (
