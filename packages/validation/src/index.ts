@@ -12,3 +12,4 @@ export * from "./session";
 export * from "./helpers/field-span.helper";
 export * from "./helpers/display-label.helper";
 export * from "./helpers/session-status-label.helper";
+export * from "./helpers/check-in-code.helper";
