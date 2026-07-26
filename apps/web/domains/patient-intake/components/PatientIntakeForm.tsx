@@ -1,33 +1,46 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Form } from "@patient/ui";
-import { computeProgress, patientIntakeSchema, type PatientIntake } from "@patient/validation";
+import { type FieldPath, useForm } from "react-hook-form";
+import { Card, CardContent, CardHeader, CardTitle, Form } from "@patient/ui";
+import {
+  intakeStepSchema,
+  IntakeStep,
+  patientIntakeSchema,
+  resolveResumeStep,
+  type PatientIntake,
+} from "@patient/validation";
 import { useSubmitSession } from "@/domains/session/client";
-import { getFormDefaults, toPatchData, toProgressData } from "../helpers/form-defaults.helper";
+import { getFormDefaults, toPatchData } from "../helpers/form-defaults.helper";
 import {
   SESSION_NOT_FOUND_STATUS,
   submitErrorMessage,
   submitErrorStatus,
 } from "../helpers/submit-error.helper";
 import { useDebouncedSessionSync } from "../hooks/useDebouncedSessionSync";
+import { useIntakeSteps } from "../hooks/useIntakeSteps";
 import { usePatientSession } from "../hooks/usePatientSession";
-import type { PatientFormValues } from "../interfaces/patient-form.interface";
+import {
+  PATIENT_SESSION_STORAGE_KEY,
+  type PatientFormValues,
+} from "../interfaces/patient-form.interface";
 import { ContactInformationSection } from "./ContactInformationSection";
 import { EmergencyContactsSection } from "./EmergencyContactsSection";
 import { FormBootstrapState } from "./FormBootstrapState";
-import { FormProgressHeader } from "./FormProgressHeader";
 import { PersonalInformationSection } from "./PersonalInformationSection";
 import { PreferencesSection } from "./PreferencesSection";
-import { SubmitBar } from "./SubmitBar";
+import { ResumeBanner } from "./ResumeBanner";
+import { StepActions } from "./StepActions";
+import { StepProgress } from "./StepProgress";
 import { SubmitErrorMessage } from "./SubmitErrorMessage";
-import { SubmittedNotice } from "./SubmittedNotice";
 
 export function PatientIntakeForm() {
   const [activeField, setActiveField] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [showResumeBanner, setShowResumeBanner] = useState(false);
+  const hadStoredSessionRef = useRef(false);
+  const resumeAppliedRef = useRef(false);
 
   const form = useForm<PatientFormValues>({
     resolver: zodResolver(patientIntakeSchema),
@@ -41,7 +54,6 @@ export function PatientIntakeForm() {
     });
 
   const values = form.watch();
-  const progress = computeProgress(toProgressData(values));
   const submitMutation = useSubmitSession();
   const isSubmitting = form.formState.isSubmitting || submitMutation.isPending;
 
@@ -97,43 +109,89 @@ export function PatientIntakeForm() {
     );
   });
 
+  const steps = useIntakeSteps({
+    onSubmitReview: () => onSubmit(),
+  });
+
+  useEffect(() => {
+    hadStoredSessionRef.current = Boolean(
+      window.sessionStorage.getItem(PATIENT_SESSION_STORAGE_KEY),
+    );
+  }, []);
+
+  useEffect(() => {
+    if (bootstrapping || resumeAppliedRef.current) return;
+    resumeAppliedRef.current = true;
+    if (!hadStoredSessionRef.current) return;
+
+    steps.goTo(resolveResumeStep(form.getValues()));
+    setShowResumeBanner(true);
+  }, [bootstrapping, form, steps]);
+
+  const handleContinue = useCallback(async () => {
+    if (steps.isLast) {
+      await steps.goNext();
+      return;
+    }
+
+    const result = intakeStepSchema(steps.step).safeParse(form.getValues());
+    if (!result.success) {
+      for (const issue of result.error.issues) {
+        const path = issue.path.join(".") as FieldPath<PatientFormValues>;
+        if (path) form.setError(path, { type: "manual", message: issue.message });
+      }
+      return;
+    }
+
+    form.clearErrors();
+    await steps.goNext();
+  }, [form, steps]);
+
   if (bootstrapping) {
     return <FormBootstrapState />;
   }
 
   const disabled = submitted || isSubmitting;
   const errorMessage = submitError ?? bootstrapError;
+  const sectionProps = {
+    disabled,
+    onFocusField,
+    onBlurField,
+  };
 
   return (
     <Form {...form}>
-      <form className="space-y-8" onSubmit={onSubmit} noValidate>
-        <FormProgressHeader progress={progress} />
-        <SubmittedNotice visible={submitted} />
-        <PersonalInformationSection
-          disabled={disabled}
-          onFocusField={onFocusField}
-          onBlurField={onBlurField}
-        />
-        <ContactInformationSection
-          disabled={disabled}
-          onFocusField={onFocusField}
-          onBlurField={onBlurField}
-        />
-        <PreferencesSection
-          disabled={disabled}
-          onFocusField={onFocusField}
-          onBlurField={onBlurField}
-        />
-        <EmergencyContactsSection
-          disabled={disabled}
-          onFocusField={onFocusField}
-          onBlurField={onBlurField}
-        />
+      <form className="space-y-6" onSubmit={onSubmit} noValidate>
+        <StepProgress step={steps.step} index={steps.index} total={steps.total} />
+        {showResumeBanner ? <ResumeBanner /> : null}
+
+        {steps.step === IntakeStep.Personal ? (
+          <PersonalInformationSection {...sectionProps} />
+        ) : null}
+        {steps.step === IntakeStep.Contact ? <ContactInformationSection {...sectionProps} /> : null}
+        {steps.step === IntakeStep.Preferences ? <PreferencesSection {...sectionProps} /> : null}
+        {steps.step === IntakeStep.Emergency ? (
+          <EmergencyContactsSection {...sectionProps} />
+        ) : null}
+        {steps.step === IntakeStep.Review ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>Review your information</CardTitle>
+            </CardHeader>
+            <CardContent className="text-sm text-slate-600">
+              Review details will appear here before submission.
+            </CardContent>
+          </Card>
+        ) : null}
+
         <SubmitErrorMessage message={errorMessage} />
-        <SubmitBar
-          submitted={submitted}
+        <StepActions
+          isFirst={steps.isFirst}
+          isReview={steps.isLast}
+          disabled={!sessionId || disabled}
           isSubmitting={isSubmitting}
-          disabled={!sessionId || submitted}
+          onBack={steps.goBack}
+          onContinue={handleContinue}
         />
       </form>
     </Form>
