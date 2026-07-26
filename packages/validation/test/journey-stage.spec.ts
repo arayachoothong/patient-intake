@@ -24,6 +24,12 @@ describe("journeyStage", () => {
     );
   });
 
+  it("maps filling at full progress to waiting for review", () => {
+    expect(journeyStage({ status: SessionStatus.Filling, progress: 100 })).toBe(
+      JourneyStage.WaitingReview,
+    );
+  });
+
   it("returns null for abandoned with zero progress", () => {
     expect(journeyStage({ status: SessionStatus.Abandoned, progress: 0 })).toBeNull();
   });
@@ -37,9 +43,11 @@ describe("journeyStage labels", () => {
   it("labels and variants", () => {
     expect(journeyStageLabel(JourneyStage.New)).toBe("New");
     expect(journeyStageLabel(JourneyStage.Filling)).toBe("Filling");
+    expect(journeyStageLabel(JourneyStage.WaitingReview)).toBe("Waiting for review");
     expect(journeyStageLabel(JourneyStage.Ready)).toBe("Ready");
     expect(journeyStageVariant(JourneyStage.Ready)).toBe("ready");
     expect(journeyStageVariant(JourneyStage.Filling)).toBe("filling");
     expect(journeyStageVariant(JourneyStage.New)).toBe("new");
+    expect(journeyStageVariant(JourneyStage.WaitingReview)).toBe("waitingReview");
   });
 });

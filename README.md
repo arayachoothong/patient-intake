@@ -14,7 +14,7 @@ Open **patient and staff in two windows** and complete the flow in one sitting (
 
 Architecture notes: [`docs/development-plan.md`](docs/development-plan.md).
 
-A Next.js monorepo demo for clinic check-in: patients complete a responsive five-step intake (**Personal → Contact → Preferences → Emergency → Review**), submit, and receive a check-in receipt. Staff watch each session move through the journey stages **New → Filling → Ready** and can open a read-only detail or submitted receipt. Updates sync in near real time over **Ably** (~250ms debounced PATCHes). Shared UI and validation live in `@patient/ui` and `@patient/validation`. HTTP uses **axios** + **TanStack Query**; Ably events update the Query cache.
+A Next.js monorepo demo for clinic check-in: patients complete a responsive five-step intake (**Personal → Contact → Preferences → Emergency → Review**), submit, and receive a check-in receipt. Staff watch each session move through the journey stages **New → Filling → Waiting for review → Ready** and can open a read-only detail or submitted receipt. Updates sync in near real time over **Ably** (~250ms debounced PATCHes). Shared UI and validation live in `@patient/ui` and `@patient/validation`. HTTP uses **axios** + **TanStack Query**; Ably events update the Query cache.
 
 ## Routes
 
@@ -22,7 +22,7 @@ A Next.js monorepo demo for clinic check-in: patients complete a responsive five
 | -------------------- | -------- | ----------------------------------------------------------------------------------------------------- |
 | `/`                  | Patient  | Complete the five-step intake, review answers, and submit                                             |
 | `/success`           | Patient  | View the submitted receipt, check-in code, front-desk cue, and next steps                             |
-| `/staff`             | Staff    | Watch sessions progress through **New**, **Filling**, and **Ready**                                   |
+| `/staff`             | Staff    | Watch sessions progress through **New**, **Filling**, **Waiting for review**, and **Ready**           |
 | `/staff/[sessionId]` | Staff    | View live intake detail while filling, or the submitted receipt and matching check-in code when ready |
 
 ## Prerequisites
@@ -100,7 +100,7 @@ If the GitHub integration is connected, pushes to `main` redeploy automatically.
 - Emergency contacts as an **array** (`emergencyContacts`: 1–3 items; each `name`, `relation`, `phone` required on submit)
 - Patient add/remove contacts (never below 1, max 3); staff detail lists the same array live
 - Successful submit redirects to `/success` with a receipt, display-only check-in code, front-desk cue, and next steps
-- Staff journey badges map an empty intake to **New**, an in-progress intake to **Filling**, and a submitted intake to **Ready**
+- Staff journey badges map an empty intake to **New**, an in-progress intake to **Filling**, a completed but unsubmitted Review step to **Waiting for review**, and a submitted intake to **Ready**
 - Staff field highlight + typing indicator (including indexed emergency paths)
 - Connection status banner (Ably connection state)
 - Full Zod validation on submit; PATCH after submit returns **409**

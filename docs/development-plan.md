@@ -45,7 +45,7 @@ Route groups `(patient)` and `(staff)` do not appear in URLs. Pages import domai
 | Surface                            | Layout                                   | Experience                                                                                                                                                                                                                                                      |
 | ---------------------------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Patient** `(patient)/layout.tsx` | Warm check-in chrome, form-focused width | `/` presents Personal → Contact → Preferences → Emergency → Review with per-step validation, Review edit links, and 1–3 emergency contacts. Submit redirects to the standalone `/success` shell for the receipt, check-in code, front-desk cue, and next steps. |
-| **Staff** `(staff)/layout.tsx`     | Dark sidebar + main pane (`StaffShell`)  | Sidebar nav item **Patient**. `/staff` shows journey badges **New**, **Filling**, and **Ready** with progress and updated time. Detail mirrors live fields while filling and becomes a submitted receipt with the matching check-in code when ready.            |
+| **Staff** `(staff)/layout.tsx`     | Dark sidebar + main pane (`StaffShell`)  | Sidebar nav item **Patient**. `/staff` shows journey badges **New**, **Filling**, **Waiting for review**, and **Ready** with progress and updated time. Detail mirrors live fields while filling and becomes a submitted receipt with the matching check-in code when ready.            |
 
 ### Responsive behavior
 
@@ -68,7 +68,7 @@ No separate mobile routes — one App Router tree adapts via Tailwind + shadcn S
 5. Patient submits from Review → full Zod validation → internal `status: submitted` → redirect to `/success`, which shows the receipt and display-only check-in code. Further PATCH returns **409**.
 6. Staff presents submitted sessions as **Ready** and replaces the live detail with the submitted receipt and matching check-in code.
 
-Journey stages are presentation derived from existing data: `filling` + 0% → **New**, `filling` + progress → **Filling**, and `submitted` → **Ready**. Persistent session statuses remain `filling` | `submitted` | `abandoned`; no new backend statuses were added (timeout → `abandoned` remains reserved for optional bonus C).
+Journey stages are presentation derived from existing data: `filling` + 0% → **New**, `filling` + progress → **Filling**, `filling` + 100% (on Review, not submitted) → **Waiting for review**, and `submitted` → **Ready**. Persistent session statuses remain `filling` | `submitted` | `abandoned`; no new backend statuses were added (timeout → `abandoned` remains reserved for optional bonus C).
 
 ### Emergency contacts shape
 
