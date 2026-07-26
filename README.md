@@ -7,21 +7,23 @@
 | **Live demo**  | [https://patient-intake-seven.vercel.app](https://patient-intake-seven.vercel.app)           |
 | **Repository** | [github.com/arayachoothong/patient-intake](https://github.com/arayachoothong/patient-intake) |
 | **Patient**    | `/`                                                                                          |
+| **Receipt**    | `/success`                                                                                   |
 | **Staff**      | `/staff`                                                                                     |
 
 Open **patient and staff in two windows** and complete the flow in one sitting (see **Known limitation** for why).
 
 Architecture notes: [`docs/development-plan.md`](docs/development-plan.md).
 
-A Next.js monorepo demo for clinic check-in: patients complete a responsive demographics form (including **1–3 emergency contacts**) while staff watch a live **Patient** table and read-only detail view. Updates sync in near real time over **Ably** (~250ms debounced PATCHes). Shared UI and validation live in `@patient/ui` and `@patient/validation`. HTTP uses **axios** + **TanStack Query**; Ably events update the Query cache.
+A Next.js monorepo demo for clinic check-in: patients complete a responsive five-step intake (**Personal → Contact → Preferences → Emergency → Review**), submit, and receive a check-in receipt. Staff watch each session move through the journey stages **New → Filling → Ready** and can open a read-only detail or submitted receipt. Updates sync in near real time over **Ably** (~250ms debounced PATCHes). Shared UI and validation live in `@patient/ui` and `@patient/validation`. HTTP uses **axios** + **TanStack Query**; Ably events update the Query cache.
 
 ## Routes
 
-| URL                  | Audience | Purpose                                                                                     |
-| -------------------- | -------- | ------------------------------------------------------------------------------------------- |
-| `/`                  | Patient  | Start check-in, fill demographics + emergency contacts array, submit                        |
-| `/staff`             | Staff    | Admin shell with sidebar menu **Patient**; table columns Name · Status · Progress · Updated |
-| `/staff/[sessionId]` | Staff    | Live mirror of one session (progress, typing, field highlight, emergency contact list)      |
+| URL                  | Audience | Purpose                                                                                               |
+| -------------------- | -------- | ----------------------------------------------------------------------------------------------------- |
+| `/`                  | Patient  | Complete the five-step intake, review answers, and submit                                             |
+| `/success`           | Patient  | View the submitted receipt, check-in code, front-desk cue, and next steps                             |
+| `/staff`             | Staff    | Watch sessions progress through **New**, **Filling**, and **Ready**                                   |
+| `/staff/[sessionId]` | Staff    | View live intake detail while filling, or the submitted receipt and matching check-in code when ready |
 
 ## Prerequisites
 
@@ -89,13 +91,16 @@ Run from the repo root (Turborepo):
 
 If the GitHub integration is connected, pushes to `main` redeploy automatically.
 
-**Demo tip:** keep patient and staff tabs open on the same deploy and finish the check-in without long idle gaps so the warm serverless instance retains in-memory sessions.
+**Warm demo tip:** for the current local or feature-branch build, open patient and staff windows before starting, keep both on the same origin/deploy, and finish without long idle gaps. This keeps both windows on the same warm process as much as the host permits. The live URL above may remain on an older deployment until the feature branch is deployed.
 
 ## Core behavior (included)
 
 - Progress percentage from required fields (denominator grows with emergency contact count)
+- Five-step patient intake with per-step validation, saved-step resume, Review edit links, and sticky navigation actions
 - Emergency contacts as an **array** (`emergencyContacts`: 1–3 items; each `name`, `relation`, `phone` required on submit)
 - Patient add/remove contacts (never below 1, max 3); staff detail lists the same array live
+- Successful submit redirects to `/success` with a receipt, display-only check-in code, front-desk cue, and next steps
+- Staff journey badges map an empty intake to **New**, an in-progress intake to **Filling**, and a submitted intake to **Ready**
 - Staff field highlight + typing indicator (including indexed emergency paths)
 - Connection status banner (Ably connection state)
 - Full Zod validation on submit; PATCH after submit returns **409**
@@ -106,21 +111,24 @@ If the GitHub integration is connected, pushes to `main` redeploy automatically.
 
 These are **not required** for core acceptance; they are documented targets for polish after the main flow works:
 
-| ID    | Idea                                                                                                |
-| ----- | --------------------------------------------------------------------------------------------------- |
-| **A** | Enhanced live UX — smoother highlight animation, richer presence (e.g. last-active timestamp)       |
-| **B** | Extra form quality — phone mask UX, stronger DOB constraints, i18n-ready copy structure             |
-| **C** | Product extras — multi-step form variant, session timeout → `abandoned`, staff export/print summary |
+| ID    | Idea                                                                                                 |
+| ----- | ---------------------------------------------------------------------------------------------------- |
+| **A** | Enhanced live UX — smoother highlight animation, richer presence (e.g. last-active timestamp)        |
+| **B** | Extra form quality — phone mask UX, stronger DOB constraints, i18n-ready copy structure              |
+| **C** | Product extras — durable persistence/auth, session timeout → `abandoned`, staff export/print summary |
 
 ## Manual test checklist
 
-Automated E2E is out of scope for v1; verify manually:
+Automated browser E2E is out of scope for v1; verify manually against the same warm local server or feature deployment:
 
-- [ ] **Two browsers** — patient on `/`, staff on `/staff` (Patient table) and session detail; typing on patient updates queue progress and detail fields within ~1s.
-- [ ] **Emergency contacts** — add a 2nd contact on patient; staff detail list updates live; submit requires all contact fields.
-- [ ] **Mobile viewport** — patient form usable on a narrow screen; staff sidebar/table/detail readable.
+- [ ] **Two windows / New** — open staff on `/staff`, then patient on `/`; the new session appears as **New**.
+- [ ] **Live Filling** — start typing in the patient window; within ~1s the staff queue shows **Filling**, and session detail mirrors progress, active field, and emergency contact changes.
+- [ ] **Patient steps** — complete Personal → Contact → Preferences → Emergency → Review; confirm invalid steps do not advance and Review edit links return to the selected step.
+- [ ] **Submit / success** — submit from Review; patient redirects to `/success` and shows a receipt plus check-in code.
+- [ ] **Staff Ready** — staff queue changes to **Ready**; detail shows the submitted receipt and the same check-in code.
+- [ ] **Mobile viewport** — on a narrow screen, the patient stepper and sticky Back/Continue actions remain usable; staff mobile cards/detail remain readable.
 - [ ] **Reconnect** — disable network briefly or reload staff tab; connection banner shows reconnecting; queue/detail resync after Ably reconnects (initial `GET /api/sessions` / session fetch).
-- [ ] **Submit lock** — after successful submit, patient form locks / shows confirmation; staff sees `submitted` status; further PATCH returns 409.
+- [ ] **Submit lock** — returning to `/` with the submitted session redirects to `/success`; further PATCH returns 409.
 
 ## Known limitation: in-memory sessions
 
