@@ -1,6 +1,8 @@
 "use client";
 
 export { PatientIntakeForm } from "./components/PatientIntakeForm";
+export { CheckInCodeBadge } from "./components/CheckInCodeBadge";
+export { PatientShellHeader } from "./components/PatientShellHeader";
 export { FormSection } from "./components/FormSection";
 export { FormBootstrapState } from "./components/FormBootstrapState";
 export { FormProgressHeader } from "./components/FormProgressHeader";
