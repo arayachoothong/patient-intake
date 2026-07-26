@@ -1,3 +1,5 @@
-export default function SuccessPage() {
-  return <p>Success</p>;
+import { SuccessPage } from "@/domains/patient-intake/components/success/SuccessPage";
+
+export default function SuccessRoute() {
+  return <SuccessPage />;
 }
