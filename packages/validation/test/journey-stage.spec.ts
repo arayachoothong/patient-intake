@@ -38,8 +38,8 @@ describe("journeyStage labels", () => {
     expect(journeyStageLabel(JourneyStage.New)).toBe("New");
     expect(journeyStageLabel(JourneyStage.Filling)).toBe("Filling");
     expect(journeyStageLabel(JourneyStage.Ready)).toBe("Ready");
-    expect(journeyStageVariant(JourneyStage.Ready)).toBe("default");
-    expect(journeyStageVariant(JourneyStage.Filling)).toBe("secondary");
-    expect(journeyStageVariant(JourneyStage.New)).toBe("outline");
+    expect(journeyStageVariant(JourneyStage.Ready)).toBe("ready");
+    expect(journeyStageVariant(JourneyStage.Filling)).toBe("filling");
+    expect(journeyStageVariant(JourneyStage.New)).toBe("new");
   });
 });

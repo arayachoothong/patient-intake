@@ -24,13 +24,15 @@ export function journeyStageLabel(stage: JourneyStage): string {
   }
 }
 
-export function journeyStageVariant(stage: JourneyStage): "default" | "secondary" | "outline" {
+export type JourneyStageBadgeVariant = "ready" | "new" | "filling";
+
+export function journeyStageVariant(stage: JourneyStage): JourneyStageBadgeVariant {
   switch (stage) {
     case JourneyStage.Ready:
-      return "default";
+      return "ready";
     case JourneyStage.Filling:
-      return "secondary";
+      return "filling";
     case JourneyStage.New:
-      return "outline";
+      return "new";
   }
 }

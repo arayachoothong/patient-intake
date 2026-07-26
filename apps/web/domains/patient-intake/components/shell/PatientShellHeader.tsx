@@ -24,7 +24,7 @@ export function PatientShellHeader() {
   }, []);
 
   return (
-    <header className="mx-auto w-full max-w-2xl px-4 pb-6 pt-10 sm:px-6 sm:pb-8 sm:pt-14">
+    <header className="mx-auto w-full max-w-[1440px] px-4 pb-6 pt-10 sm:px-6 sm:pb-8 sm:pt-14">
       <div className="flex flex-col items-start gap-5">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-700">
