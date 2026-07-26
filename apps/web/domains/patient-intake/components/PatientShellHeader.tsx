@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { startSessionIdPoller } from "../helpers/session-id-poller.helper";
 import { PATIENT_SESSION_STORAGE_KEY } from "../interfaces/patient-form.interface";
 import { CheckInCodeBadge } from "./CheckInCodeBadge";
-
-const SESSION_ID_POLL_INTERVAL_MS = 250;
 
 type SessionStorageReader = Pick<Storage, "getItem">;
 
@@ -18,17 +17,10 @@ export function PatientShellHeader() {
   const [sessionId, setSessionId] = useState<string | null>(null);
 
   useEffect(() => {
-    const syncSessionId = () => {
-      const storedSessionId = readStoredPatientSessionId();
-      setSessionId((currentSessionId) =>
-        currentSessionId === storedSessionId ? currentSessionId : storedSessionId,
-      );
-    };
-
-    syncSessionId();
-    const intervalId = window.setInterval(syncSessionId, SESSION_ID_POLL_INTERVAL_MS);
-
-    return () => window.clearInterval(intervalId);
+    return startSessionIdPoller({
+      readId: readStoredPatientSessionId,
+      onChange: setSessionId,
+    });
   }, []);
 
   return (
