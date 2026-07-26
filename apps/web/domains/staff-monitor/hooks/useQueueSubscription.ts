@@ -3,15 +3,19 @@
 import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import type { ConnectionState } from "@patient/ui";
-import type { Session } from "@patient/validation";
+import { RealtimeEvent, type Session } from "@patient/validation";
 import type { InboundMessage } from "ably";
 import { getAblyClient, QUEUE_CHANNEL, sessionKeys, useSessions } from "@/domains/session/client";
-import type { RealtimeEvent, SessionEventPayload } from "@/domains/session";
+import type { SessionEventPayload } from "@/domains/session";
 import { mapAblyConnectionState } from "../helpers/ably-connection.helper";
 import { sortByUpdatedAt, upsertSession } from "../helpers/session-list.helper";
 import type { QueueSubscriptionState } from "../interfaces/staff-subscription.interface";
 
-const QUEUE_EVENTS: RealtimeEvent[] = ["session.created", "session.updated", "session.submitted"];
+const QUEUE_EVENTS: RealtimeEvent[] = [
+  RealtimeEvent.SessionCreated,
+  RealtimeEvent.SessionUpdated,
+  RealtimeEvent.SessionSubmitted,
+];
 
 export function useQueueSubscription(): QueueSubscriptionState {
   const query = useSessions();

@@ -4,15 +4,19 @@ import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import type { ConnectionState } from "@patient/ui";
-import type { Session } from "@patient/validation";
+import { RealtimeEvent, type Session } from "@patient/validation";
 import type { InboundMessage } from "ably";
 import { getAblyClient, sessionChannel, sessionKeys, useSession } from "@/domains/session/client";
-import type { RealtimeEvent, SessionEventPayload } from "@/domains/session";
+import type { SessionEventPayload } from "@/domains/session";
 import { mapAblyConnectionState } from "../helpers/ably-connection.helper";
 import { sortByUpdatedAt, upsertSession } from "../helpers/session-list.helper";
 import type { SessionSubscriptionState } from "../interfaces/staff-subscription.interface";
 
-const SESSION_EVENTS: RealtimeEvent[] = ["session.created", "session.updated", "session.submitted"];
+const SESSION_EVENTS: RealtimeEvent[] = [
+  RealtimeEvent.SessionCreated,
+  RealtimeEvent.SessionUpdated,
+  RealtimeEvent.SessionSubmitted,
+];
 
 function queryErrorMessage(error: unknown): string | null {
   if (!error) return null;

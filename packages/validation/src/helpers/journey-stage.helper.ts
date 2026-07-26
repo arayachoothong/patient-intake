@@ -1,39 +1,36 @@
 import { SessionStatus } from "../constants/session-status.constant";
-
-export type JourneyStage = "new" | "filling" | "ready";
+import { JourneyStage } from "../constants/journey-stage.constant";
 
 export function journeyStage(input: {
   status: SessionStatus;
   progress: number;
 }): JourneyStage | null {
-  if (input.status === SessionStatus.Submitted) return "ready";
+  if (input.status === SessionStatus.Submitted) return JourneyStage.Ready;
   if (input.status === SessionStatus.Filling) {
-    if (input.progress <= 0) return "new";
-    return "filling";
+    if (input.progress <= 0) return JourneyStage.New;
+    return JourneyStage.Filling;
   }
   return null;
 }
 
 export function journeyStageLabel(stage: JourneyStage): string {
   switch (stage) {
-    case "new":
+    case JourneyStage.New:
       return "New";
-    case "filling":
+    case JourneyStage.Filling:
       return "Filling";
-    case "ready":
+    case JourneyStage.Ready:
       return "Ready";
   }
 }
 
-export function journeyStageVariant(
-  stage: JourneyStage,
-): "default" | "secondary" | "outline" {
+export function journeyStageVariant(stage: JourneyStage): "default" | "secondary" | "outline" {
   switch (stage) {
-    case "ready":
+    case JourneyStage.Ready:
       return "default";
-    case "filling":
+    case JourneyStage.Filling:
       return "secondary";
-    case "new":
+    case JourneyStage.New:
       return "outline";
   }
 }

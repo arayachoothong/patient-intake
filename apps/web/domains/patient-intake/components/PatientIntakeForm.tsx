@@ -4,8 +4,10 @@ import { type FormEvent, useCallback, useEffect, useRef, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type FieldPath, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { Form } from "@patient/ui";
+import { Form, QueryLoadingSkeleton } from "@patient/ui";
 import {
+  formSectionForStep,
+  FormSection,
   intakeStepSchema,
   IntakeStep,
   patientIntakeSchema,
@@ -28,16 +30,13 @@ import { useDebouncedSessionSync } from "../hooks/useDebouncedSessionSync";
 import { useIntakeSteps } from "../hooks/useIntakeSteps";
 import { usePatientSession } from "../hooks/usePatientSession";
 import { type PatientFormValues } from "../interfaces/patient-form.interface";
-import { ContactInformationSection } from "./ContactInformationSection";
-import { EmergencyContactsSection } from "./EmergencyContactsSection";
-import { FormBootstrapState } from "./FormBootstrapState";
-import { PersonalInformationSection } from "./PersonalInformationSection";
-import { PreferencesSection } from "./PreferencesSection";
-import { ResumeBanner } from "./ResumeBanner";
-import { ReviewStep } from "./ReviewStep";
-import { StepActions } from "./StepActions";
-import { StepProgress } from "./StepProgress";
-import { SubmitErrorMessage } from "./SubmitErrorMessage";
+import { EmergencyContactsSection } from "./emergency/EmergencyContactsSection";
+import { IntakeFieldList } from "./form/IntakeFieldList";
+import { ResumeBanner } from "./form/ResumeBanner";
+import { ReviewStep } from "./review/ReviewStep";
+import { StepActions } from "./step/StepActions";
+import { StepProgress } from "./step/StepProgress";
+import { SubmitErrorMessage } from "./form/SubmitErrorMessage";
 
 export function PatientIntakeForm() {
   const router = useRouter();
@@ -173,11 +172,16 @@ export function PatientIntakeForm() {
   );
 
   if (bootstrapping || submitted) {
-    return <FormBootstrapState />;
+    return (
+      <div role="status" aria-label="Preparing your intake form">
+        <QueryLoadingSkeleton rows={5} />
+      </div>
+    );
   }
 
   const disabled = isSubmitting;
   const errorMessage = submitError ?? bootstrapError;
+  const section = formSectionForStep(steps.step);
   const sectionProps = {
     disabled,
     onFocusField,
@@ -190,13 +194,9 @@ export function PatientIntakeForm() {
         <StepProgress step={steps.step} index={steps.index} total={steps.total} />
         {showResumeBanner ? <ResumeBanner /> : null}
 
-        {steps.step === IntakeStep.Personal ? (
-          <PersonalInformationSection {...sectionProps} />
-        ) : null}
-        {steps.step === IntakeStep.Contact ? <ContactInformationSection {...sectionProps} /> : null}
-        {steps.step === IntakeStep.Preferences ? <PreferencesSection {...sectionProps} /> : null}
-        {steps.step === IntakeStep.Emergency ? (
-          <EmergencyContactsSection {...sectionProps} />
+        {section === FormSection.Emergency ? <EmergencyContactsSection {...sectionProps} /> : null}
+        {section && section !== FormSection.Emergency ? (
+          <IntakeFieldList section={section} {...sectionProps} />
         ) : null}
         {steps.step === IntakeStep.Review ? <ReviewStep values={values} goTo={steps.goTo} /> : null}
 

@@ -1,9 +1,10 @@
 import axios from "axios";
+import { ApiErrorCode } from "@patient/validation";
 
 export const SUBMIT_ERROR_MESSAGES = {
-  invalid: "Please fix the highlighted fields and try again.",
-  notFound: "Your intake session expired. We started a new one — please submit again.",
-  conflict: "This intake was already submitted.",
+  [ApiErrorCode.Invalid]: "Please fix the highlighted fields and try again.",
+  [ApiErrorCode.NotFound]: "Your intake session expired. We started a new one — please submit again.",
+  [ApiErrorCode.Conflict]: "This intake was already submitted.",
   network: "Could not reach the server. Check your connection and try again.",
   unknown: "Something went wrong while submitting. Please try again.",
 } as const;
@@ -21,11 +22,11 @@ export function submitErrorMessage(error: unknown): string {
 
   switch (status) {
     case 400:
-      return SUBMIT_ERROR_MESSAGES.invalid;
+      return SUBMIT_ERROR_MESSAGES[ApiErrorCode.Invalid];
     case SESSION_NOT_FOUND_STATUS:
-      return SUBMIT_ERROR_MESSAGES.notFound;
+      return SUBMIT_ERROR_MESSAGES[ApiErrorCode.NotFound];
     case 409:
-      return SUBMIT_ERROR_MESSAGES.conflict;
+      return SUBMIT_ERROR_MESSAGES[ApiErrorCode.Conflict];
     default:
       return SUBMIT_ERROR_MESSAGES.unknown;
   }

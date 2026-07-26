@@ -1,4 +1,5 @@
 import { createSession, listSessions } from "@/domains/session";
+import { RealtimeEvent } from "@patient/validation";
 import { publishSessionEvent } from "./publish-session-event";
 
 export async function GET() {
@@ -7,7 +8,7 @@ export async function GET() {
 
 export async function POST() {
   const session = createSession();
-  await publishSessionEvent("session.created", session, {
+  await publishSessionEvent(RealtimeEvent.SessionCreated, session, {
     queue: true,
     session: false,
   });

@@ -1,6 +1,6 @@
 import type { Session } from "@patient/validation";
 
-export type RealtimeEvent = "session.created" | "session.updated" | "session.submitted";
+export { RealtimeEvent } from "@patient/validation";
 
 export type SessionEventPayload = {
   session: Session;

@@ -10,14 +10,6 @@ export type FieldDefinition = {
   input: FieldInputType;
 };
 
-export const MAX_EMERGENCY_CONTACTS = 3;
-
-export const EMERGENCY_CONTACT_FIELD_LABELS = {
-  name: "Contact name",
-  relation: "Relation",
-  phone: "Mobile phone",
-} as const;
-
 export const FIELD_DEFINITIONS: readonly FieldDefinition[] = [
   {
     name: FieldName.FirstName,
@@ -96,6 +88,16 @@ export const FIELD_DEFINITIONS: readonly FieldDefinition[] = [
     section: FormSection.Preferences,
     input: FieldInputType.Text,
   },
+] as const;
+
+/** Fields shown on the patient-facing check-in receipt, in display order. */
+export const RECEIPT_SUMMARY_FIELDS = [
+  FieldName.FirstName,
+  FieldName.LastName,
+  FieldName.DateOfBirth,
+  FieldName.Gender,
+  FieldName.PhoneNumber,
+  FieldName.PreferredLanguage,
 ] as const;
 
 export const REQUIRED_PROGRESS_FIELDS = [

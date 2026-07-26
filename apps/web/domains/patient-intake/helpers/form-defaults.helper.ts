@@ -64,23 +64,10 @@ export function sessionDataToFormValues(data: Partial<PatientIntake>): PatientFo
   };
 }
 
-export function toProgressData(values: PatientFormValues): Partial<PatientIntake> {
-  return {
-    firstName: values.firstName,
-    lastName: values.lastName,
-    dateOfBirth: values.dateOfBirth,
-    gender: values.gender === "" ? undefined : values.gender,
-    phoneNumber: values.phoneNumber,
-    email: values.email,
-    address: values.address,
-    preferredLanguage: values.preferredLanguage,
-    nationality: values.nationality,
-    emergencyContacts: values.emergencyContacts.map((contact) => ({
-      name: contact.name,
-      relation: contact.relation,
-      phone: contact.phone,
-    })),
-  };
+/** Form values as session-shaped data for read-only display (drops the empty gender placeholder). */
+export function toDisplayData(values: PatientFormValues): Partial<PatientIntake> {
+  const { gender, ...rest } = values;
+  return gender === "" ? rest : { ...rest, gender };
 }
 
 export function toPatchData(values: PatientFormValues): PatientIntakePartial {

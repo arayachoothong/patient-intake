@@ -1,24 +1,19 @@
 "use client";
 
-import { FORM_SECTION_ORDER, FormSection, SessionStatus } from "@patient/validation";
+import { QueryErrorAlert, QueryLoadingSkeleton } from "@patient/ui";
+import { SessionStatus } from "@patient/validation";
 import { useSessionSubscription } from "../hooks/useSessionSubscription";
-import { BackToPatientLink } from "./BackToPatientLink";
-import { EmergencyContactsList } from "./EmergencyContactsList";
-import { PatientDetailHeader } from "./PatientDetailHeader";
-import { PatientInformationSection } from "./PatientInformationSection";
-import { PatientProgressBar } from "./PatientProgressBar";
-import { SessionErrorState } from "./SessionErrorState";
-import { SessionLoadingState } from "./SessionLoadingState";
-import { SubmittedIntakeReceipt } from "./SubmittedIntakeReceipt";
-import { TypingIndicator } from "./TypingIndicator";
+import { BackToPatientLink } from "./live/BackToPatientLink";
+import { EmergencyContactsList } from "./emergency/EmergencyContactsList";
+import { PatientDetailHeader } from "./live/PatientDetailHeader";
+import { PatientInformationList } from "./live/PatientInformationList";
+import { PatientProgressBar } from "./live/PatientProgressBar";
+import { SubmittedIntakeReceipt } from "./submitted-receipt/SubmittedIntakeReceipt";
+import { TypingIndicator } from "./live/TypingIndicator";
 
 type PatientLiveViewProps = {
   sessionId: string;
 };
-
-const DEMOGRAPHIC_SECTIONS = FORM_SECTION_ORDER.filter(
-  (section) => section !== FormSection.Emergency,
-);
 
 export function PatientLiveView({ sessionId }: PatientLiveViewProps) {
   const { session, connectionState, isLoading, error } = useSessionSubscription(sessionId);
@@ -28,7 +23,9 @@ export function PatientLiveView({ sessionId }: PatientLiveViewProps) {
       <div className="flex min-h-svh flex-col">
         <div className="flex-1 space-y-6 p-4">
           <BackToPatientLink />
-          <SessionLoadingState />
+          <div role="status" aria-label="Loading session">
+            <QueryLoadingSkeleton rows={6} />
+          </div>
         </div>
       </div>
     );
@@ -37,8 +34,12 @@ export function PatientLiveView({ sessionId }: PatientLiveViewProps) {
   if (error || !session) {
     return (
       <div className="flex min-h-svh flex-col">
-        <div className="flex-1 p-4">
-          <SessionErrorState message={error ?? "Session not found"} />
+        <div className="flex-1 space-y-4 p-4">
+          <QueryErrorAlert
+            title="Unable to load session"
+            description={error ?? "Session not found"}
+          />
+          <BackToPatientLink />
         </div>
       </div>
     );
@@ -66,15 +67,11 @@ export function PatientLiveView({ sessionId }: PatientLiveViewProps) {
         <PatientDetailHeader session={session} connectionState={connectionState} />
         <PatientProgressBar session={session} />
         <TypingIndicator visible={showTyping} />
-        {DEMOGRAPHIC_SECTIONS.map((section) => (
-          <PatientInformationSection
-            key={section}
-            section={section}
-            data={session.data}
-            activeField={activeField}
-            isTyping={Boolean(session.isTyping)}
-          />
-        ))}
+        <PatientInformationList
+          data={session.data}
+          activeField={activeField}
+          isTyping={Boolean(session.isTyping)}
+        />
         <EmergencyContactsList
           data={session.data}
           activeField={activeField}

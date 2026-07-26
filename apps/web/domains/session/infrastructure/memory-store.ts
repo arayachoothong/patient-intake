@@ -1,10 +1,11 @@
 import {
+  ApiErrorCode,
   SessionStatus,
   computeProgress,
   patientIntakeSchema,
   type PatientIntake,
-  type PatientIntakePartial,
   type Session,
+  type SessionPatchInput,
 } from "@patient/validation";
 
 const sessions = new Map<string, Session>();
@@ -43,19 +44,13 @@ export function getSessionFromStore(id: string): Session | undefined {
   return sessions.get(id);
 }
 
-export type PatchSessionInput = {
-  data?: PatientIntakePartial;
-  activeField?: string | null;
-  isTyping?: boolean;
-};
+export type PatchSessionResult = Session | { error: ApiErrorCode.NotFound | ApiErrorCode.Conflict };
 
-export type PatchSessionResult = Session | { error: "not_found" | "conflict" };
-
-export function patchSessionInStore(id: string, input: PatchSessionInput): PatchSessionResult {
+export function patchSessionInStore(id: string, input: SessionPatchInput): PatchSessionResult {
   const session = sessions.get(id);
-  if (!session) return { error: "not_found" };
+  if (!session) return { error: ApiErrorCode.NotFound };
   if (session.status === SessionStatus.Submitted) {
-    return { error: "conflict" };
+    return { error: ApiErrorCode.Conflict };
   }
 
   const data = input.data ? { ...session.data, ...input.data } : session.data;
@@ -71,15 +66,17 @@ export function patchSessionInStore(id: string, input: PatchSessionInput): Patch
   return updated;
 }
 
-export type SubmitSessionResult = Session | { error: "not_found" | "invalid"; issues?: unknown };
+export type SubmitSessionResult =
+  | Session
+  | { error: ApiErrorCode.NotFound | ApiErrorCode.Invalid; issues?: unknown };
 
 export function submitSessionInStore(id: string, data: PatientIntake): SubmitSessionResult {
   const session = sessions.get(id);
-  if (!session) return { error: "not_found" };
+  if (!session) return { error: ApiErrorCode.NotFound };
 
   const parsed = patientIntakeSchema.safeParse(data);
   if (!parsed.success) {
-    return { error: "invalid", issues: parsed.error.issues };
+    return { error: ApiErrorCode.Invalid, issues: parsed.error.issues };
   }
 
   const updated: Session = {

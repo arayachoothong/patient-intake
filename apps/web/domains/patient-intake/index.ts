@@ -1,31 +1,31 @@
 "use client";
 
 export { PatientIntakeForm } from "./components/PatientIntakeForm";
-export { CheckInCodeBadge } from "./components/CheckInCodeBadge";
-export { PatientShellHeader } from "./components/PatientShellHeader";
-export { FormSection } from "./components/FormSection";
-export { FormBootstrapState } from "./components/FormBootstrapState";
-export { FormProgressHeader } from "./components/FormProgressHeader";
-export { SubmitErrorMessage } from "./components/SubmitErrorMessage";
-export { SubmitBar } from "./components/SubmitBar";
-export { PersonalInformationSection } from "./components/PersonalInformationSection";
-export { ContactInformationSection } from "./components/ContactInformationSection";
-export { PreferencesSection } from "./components/PreferencesSection";
-export { EmergencyContactsSection } from "./components/EmergencyContactsSection";
-export { EmergencyContactFields } from "./components/EmergencyContactFields";
-export { AddContactButton } from "./components/AddContactButton";
-export { RemoveContactButton } from "./components/RemoveContactButton";
-export { IntakeField } from "./components/IntakeField";
-export { TextInputField } from "./components/TextInputField";
-export { TextareaField } from "./components/TextareaField";
-export { SelectField } from "./components/SelectField";
+export { CheckInCodeBadge } from "./components/shell/CheckInCodeBadge";
+export { PatientShellHeader } from "./components/shell/PatientShellHeader";
+export { IntakeFormSection } from "./components/form/IntakeFormSection";
+export { SubmitErrorMessage } from "./components/form/SubmitErrorMessage";
+export { IntakeFieldList } from "./components/form/IntakeFieldList";
+export { IntakeFieldItem } from "./components/form/IntakeFieldItem";
+export { IntakeField } from "./components/form/IntakeField";
+export { ResumeBanner } from "./components/form/ResumeBanner";
+export { EmergencyContactsSection } from "./components/emergency/EmergencyContactsSection";
+export { EmergencyContactFieldList } from "./components/emergency/EmergencyContactFieldList";
+export { EmergencyContactList } from "./components/emergency/EmergencyContactList";
+export { EmergencyContactItem } from "./components/emergency/EmergencyContactItem";
+export { EmergencyContactFieldItem } from "./components/emergency/EmergencyContactFieldItem";
+export { AddContactButton } from "./components/emergency/AddContactButton";
+export { RemoveContactButton } from "./components/emergency/RemoveContactButton";
+export { ReviewStep } from "./components/review/ReviewStep";
+export { StepProgress } from "./components/step/StepProgress";
+export { StepActions } from "./components/step/StepActions";
 export { useDebouncedSessionSync } from "./hooks/useDebouncedSessionSync";
 export { usePatientSession } from "./hooks/usePatientSession";
 export {
   getFormDefaults,
   sessionDataToFormValues,
+  toDisplayData,
   toPatchData,
-  toProgressData,
 } from "./helpers/form-defaults.helper";
 export {
   FORM_SECTION_ORDER,
@@ -36,6 +36,5 @@ export {
 export type {
   EmergencyContactFormValue,
   PatientFormValues,
-  SessionPatchBody,
 } from "./interfaces/patient-form.interface";
 export { PATIENT_SESSION_STORAGE_KEY } from "./interfaces/patient-form.interface";

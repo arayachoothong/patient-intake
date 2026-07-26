@@ -1,5 +1,9 @@
 import { z } from "zod";
 import { Gender } from "./constants/gender.constant";
+import {
+  MAX_EMERGENCY_CONTACTS,
+  MIN_EMERGENCY_CONTACTS,
+} from "./constants/emergency-contact-fields.constant";
 import { emailSchema, phoneSchema } from "./contact-rules";
 
 export const emergencyContactsItemSchema = z.object({
@@ -34,14 +38,20 @@ export const patientIntakeSchema = z.object({
   preferredLanguage: z.string().trim().min(1, "Required"),
   nationality: z.string().trim().min(1, "Required"),
   religion: z.string().trim().optional(),
-  emergencyContacts: z.array(emergencyContactsItemSchema).min(1).max(3),
+  emergencyContacts: z
+    .array(emergencyContactsItemSchema)
+    .min(MIN_EMERGENCY_CONTACTS)
+    .max(MAX_EMERGENCY_CONTACTS),
 });
 
 export const patientIntakePartialSchema = patientIntakeSchema
   .omit({ emergencyContacts: true })
   .partial()
   .extend({
-    emergencyContacts: z.array(emergencyContactsItemPartialSchema).max(3).optional(),
+    emergencyContacts: z
+      .array(emergencyContactsItemPartialSchema)
+      .max(MAX_EMERGENCY_CONTACTS)
+      .optional(),
   });
 
 export type EmergencyContact = z.infer<typeof emergencyContactsItemSchema>;

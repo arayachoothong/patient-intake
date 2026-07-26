@@ -1,5 +1,5 @@
-import { PatientTable } from "@/domains/staff-monitor";
+import { PatientList } from "@/domains/staff-monitor";
 
-export default function StaffQueuePage() {
-  return <PatientTable />;
+export default function StaffPatientsPage() {
+  return <PatientList />;
 }

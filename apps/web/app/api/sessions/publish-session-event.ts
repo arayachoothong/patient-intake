@@ -1,6 +1,5 @@
-import type { RealtimeEvent } from "@/domains/session";
 import { publishToQueue, publishToSession } from "@/domains/session/infrastructure/publisher";
-import type { Session } from "@patient/validation";
+import type { RealtimeEvent, Session } from "@patient/validation";
 
 type PublishTargets = {
   queue?: boolean;

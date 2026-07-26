@@ -1,6 +1,6 @@
 import "server-only";
-import type { Session } from "@patient/validation";
-import type { RealtimeEvent, SessionEventPayload } from "../interfaces/realtime-event.interface";
+import { type RealtimeEvent, type Session } from "@patient/validation";
+import type { SessionEventPayload } from "../interfaces/realtime-event.interface";
 import { getAblyServer } from "./ably-server";
 import { QUEUE_CHANNEL, sessionChannel } from "./channels";
 

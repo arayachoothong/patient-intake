@@ -1,4 +1,4 @@
-import type { Gender, PatientIntakePartial } from "@patient/validation";
+import type { Gender } from "@patient/validation";
 
 export type EmergencyContactFormValue = {
   name: string;
@@ -19,12 +19,6 @@ export type PatientFormValues = {
   nationality: string;
   religion: string;
   emergencyContacts: EmergencyContactFormValue[];
-};
-
-export type SessionPatchBody = {
-  data?: PatientIntakePartial;
-  activeField?: string | null;
-  isTyping?: boolean;
 };
 
 export const PATIENT_SESSION_STORAGE_KEY = "patient-intake:sessionId";

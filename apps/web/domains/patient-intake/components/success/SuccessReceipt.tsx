@@ -1,39 +1,14 @@
-import React from "react";
-import { formatGenderLabel, formatLanguageLabel, type PatientIntake } from "@patient/validation";
+"use client";
+
+import { formatSubmittedAt, type PatientIntake } from "@patient/validation";
+import { ReceiptFieldList } from "./ReceiptFieldList";
 
 type SuccessReceiptProps = {
   data: Partial<PatientIntake>;
   submittedAt: string;
 };
 
-function ReceiptField({
-  label,
-  value,
-  className = "",
-}: {
-  label: string;
-  value?: string;
-  className?: string;
-}) {
-  return (
-    <div className={`border-b border-stone-200/80 pb-4 last:border-0 last:pb-0 ${className}`}>
-      <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">{label}</dt>
-      <dd className="mt-1.5 text-base text-stone-900">{value || "—"}</dd>
-    </div>
-  );
-}
-
-function formatSubmittedAt(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return new Intl.DateTimeFormat(undefined, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
-}
-
 export function SuccessReceipt({ data, submittedAt }: SuccessReceiptProps) {
-  const fullName = [data.firstName, data.middleName, data.lastName].filter(Boolean).join(" ");
   const contacts = data.emergencyContacts ?? [];
   const contactNames = contacts
     .map((contact) => contact.name)
@@ -49,21 +24,11 @@ export function SuccessReceipt({ data, submittedAt }: SuccessReceiptProps) {
         <p className="text-sm text-stone-500">Submitted {formatSubmittedAt(submittedAt)}</p>
       </div>
 
-      <dl className="grid gap-x-10 gap-y-4 sm:grid-cols-2">
-        <ReceiptField label="Full name" value={fullName} />
-        <ReceiptField label="Date of birth" value={data.dateOfBirth} />
-        <ReceiptField label="Gender" value={data.gender && formatGenderLabel(data.gender)} />
-        <ReceiptField label="Phone" value={data.phoneNumber} />
-        <ReceiptField
-          label="Preferred language"
-          value={data.preferredLanguage && formatLanguageLabel(data.preferredLanguage)}
-        />
-        <ReceiptField
-          className="sm:col-span-2"
-          label={`Emergency contacts (${contacts.length})`}
-          value={contactNames}
-        />
-      </dl>
+      <ReceiptFieldList
+        data={data}
+        emergencyContactCount={contacts.length}
+        emergencyContactSummary={contactNames}
+      />
     </section>
   );
 }
