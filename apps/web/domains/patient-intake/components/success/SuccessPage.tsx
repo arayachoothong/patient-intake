@@ -7,6 +7,7 @@ import { Skeleton } from "@patient/ui";
 import { useSession } from "@/domains/session/client";
 import { shouldRedirectToIntake } from "../../helpers/success-guard.helper";
 import { PATIENT_SESSION_STORAGE_KEY } from "../../interfaces/patient-form.interface";
+import { FrontDeskCue } from "./FrontDeskCue";
 import { SuccessNextSteps } from "./SuccessNextSteps";
 import { SuccessReceipt } from "./SuccessReceipt";
 
@@ -73,6 +74,7 @@ export function SuccessPage() {
           <p className="mt-3 max-w-lg text-base leading-7 text-stone-600">
             Your details are with the front desk. Keep this page handy while you wait.
           </p>
+          <FrontDeskCue status={session.status} />
           <div className="mt-7 inline-flex items-center rounded-full border border-amber-300/70 bg-white/75 px-4 py-2 font-mono text-sm tracking-wide text-stone-700">
             Check-in code
             <span className="ml-2 font-bold text-amber-900">{checkInCode(session.id)}</span>
