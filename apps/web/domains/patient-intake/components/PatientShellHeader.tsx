@@ -6,21 +6,27 @@ import { CheckInCodeBadge } from "./CheckInCodeBadge";
 
 const SESSION_ID_POLL_INTERVAL_MS = 250;
 
+type SessionStorageReader = Pick<Storage, "getItem">;
+
+export function readStoredPatientSessionId(
+  storage: SessionStorageReader = window.sessionStorage,
+): string | null {
+  return storage.getItem(PATIENT_SESSION_STORAGE_KEY);
+}
+
 export function PatientShellHeader() {
   const [sessionId, setSessionId] = useState<string | null>(null);
 
   useEffect(() => {
-    const readSessionId = () => {
-      const storedSessionId = window.sessionStorage.getItem(PATIENT_SESSION_STORAGE_KEY);
-      setSessionId(storedSessionId);
-      return storedSessionId;
+    const syncSessionId = () => {
+      const storedSessionId = readStoredPatientSessionId();
+      setSessionId((currentSessionId) =>
+        currentSessionId === storedSessionId ? currentSessionId : storedSessionId,
+      );
     };
 
-    if (readSessionId()) return;
-
-    const intervalId = window.setInterval(() => {
-      if (readSessionId()) window.clearInterval(intervalId);
-    }, SESSION_ID_POLL_INTERVAL_MS);
+    syncSessionId();
+    const intervalId = window.setInterval(syncSessionId, SESSION_ID_POLL_INTERVAL_MS);
 
     return () => window.clearInterval(intervalId);
   }, []);
@@ -32,10 +38,10 @@ export function PatientShellHeader() {
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">
             Meridian Clinic
           </p>
-          <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-stone-900 sm:text-4xl">
+          <h1 className="font-display mt-2 text-3xl font-semibold tracking-tight text-stone-900 sm:text-4xl">
             Patient check-in
           </h1>
-          <p className="mt-2 text-base text-muted-foreground">
+          <p className="text-muted-foreground mt-2 text-base">
             Complete your intake at your own pace.
           </p>
         </div>

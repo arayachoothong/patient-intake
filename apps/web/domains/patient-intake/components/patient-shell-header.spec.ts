@@ -2,7 +2,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { CheckInCodeBadge } from "./CheckInCodeBadge";
-import { PatientShellHeader } from "./PatientShellHeader";
+import { PatientShellHeader, readStoredPatientSessionId } from "./PatientShellHeader";
 
 describe("CheckInCodeBadge", () => {
   it("formats the session id as a check-in code", () => {
@@ -24,5 +24,20 @@ describe("PatientShellHeader", () => {
     expect(markup).toContain("Meridian Clinic");
     expect(markup).toContain("Patient check-in");
     expect(markup).toContain("Complete your intake at your own pace.");
+  });
+
+  it("reads session id changes including removal and recreation", () => {
+    let storedSessionId: string | null = "first-session";
+    const storage = {
+      getItem: () => storedSessionId,
+    };
+
+    expect(readStoredPatientSessionId(storage)).toBe("first-session");
+
+    storedSessionId = null;
+    expect(readStoredPatientSessionId(storage)).toBeNull();
+
+    storedSessionId = "second-session";
+    expect(readStoredPatientSessionId(storage)).toBe("second-session");
   });
 });
