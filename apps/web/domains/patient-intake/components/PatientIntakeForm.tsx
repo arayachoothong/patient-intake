@@ -80,7 +80,6 @@ export function PatientIntakeForm() {
             return;
           }
 
-          // Session vanished server-side (in-memory store restart) — new id, then resubmit.
           void recreateSession().then(
             (freshId) => {
               submitMutation.mutate(

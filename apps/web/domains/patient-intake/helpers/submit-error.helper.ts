@@ -8,7 +8,6 @@ export const SUBMIT_ERROR_MESSAGES = {
   unknown: "Something went wrong while submitting. Please try again.",
 } as const;
 
-/** HTTP status the API returns when the session no longer exists. */
 export const SESSION_NOT_FOUND_STATUS = 404;
 
 export function submitErrorStatus(error: unknown): number | null {

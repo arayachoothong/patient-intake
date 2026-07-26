@@ -1,9 +1,7 @@
 import { z } from "zod";
 
-/** Thailand: local `0` + 8–9 digits (landline/mobile) or `+66` + 8–9 digits. */
 export const THAI_PHONE_REGEX = /^(?:\+66|0)\d{8,9}$/;
 
-/** Remove human separators before validating. */
 export function normalizePhone(raw: string): string {
   return raw.replace(/[\s()-]/g, "");
 }

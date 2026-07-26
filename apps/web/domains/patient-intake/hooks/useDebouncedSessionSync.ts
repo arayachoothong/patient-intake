@@ -14,10 +14,6 @@ type UseDebouncedSessionSyncArgs = {
   enabled: boolean;
 };
 
-/**
- * Debounce form value PATCHes (250ms) with isTyping + activeField.
- * After ~800ms idle, clears isTyping. No-ops when disabled (e.g. submitted).
- */
 export function useDebouncedSessionSync({
   sessionId,
   data,

@@ -28,7 +28,6 @@ describe("session domain store", () => {
     });
     expect("error" in updated).toBe(false);
     if (!("error" in updated)) {
-      // 2 of 9 base + 0 of 3 contact slots → 2/12 ≈ 17%
       expect(updated.progress).toBe(17);
       expect(updated.activeField).toBe("firstName");
       expect(updated.isTyping).toBe(true);

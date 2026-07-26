@@ -9,7 +9,6 @@ import type { PatientFormValues } from "../interfaces/patient-form.interface";
 
 export { FORM_SECTION_ORDER, FORM_SECTION_TITLES };
 
-/** @deprecated Prefer `formatGenderLabel` from `@patient/validation`. */
 export const genderOptionLabel = formatGenderLabel;
 
 export function getFieldError(

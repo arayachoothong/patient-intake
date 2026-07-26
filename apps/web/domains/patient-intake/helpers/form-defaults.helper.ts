@@ -64,7 +64,6 @@ export function sessionDataToFormValues(data: Partial<PatientIntake>): PatientFo
   };
 }
 
-/** Local progress uses raw strings (including in-progress invalid values). */
 export function toProgressData(values: PatientFormValues): Partial<PatientIntake> {
   return {
     firstName: values.firstName,
@@ -84,11 +83,6 @@ export function toProgressData(values: PatientFormValues): Partial<PatientIntake
   };
 }
 
-/**
- * Build a PATCH body that passes `patientIntakePartialSchema`.
- * Incomplete typed values (e.g. partial email) are omitted until valid.
- * Emergency contacts always sync as entered.
- */
 export function toPatchData(values: PatientFormValues): PatientIntakePartial {
   const candidate: Record<string, unknown> = {
     firstName: values.firstName,
@@ -116,7 +110,6 @@ export function toPatchData(values: PatientFormValues): PatientIntakePartial {
     }
   }
 
-  // Live sync: send emergency contacts as entered (submit still requires complete items).
   data.emergencyContacts = values.emergencyContacts.map((contact) => ({
     name: contact.name,
     relation: contact.relation,

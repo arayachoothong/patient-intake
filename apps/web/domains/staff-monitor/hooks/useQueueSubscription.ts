@@ -13,10 +13,6 @@ import type { QueueSubscriptionState } from "../interfaces/staff-subscription.in
 
 const QUEUE_EVENTS: RealtimeEvent[] = ["session.created", "session.updated", "session.submitted"];
 
-/**
- * Loads sessions via React Query, subscribes to staff-queue, and upserts into
- * `sessionKeys.list()` on Ably events. Refetches the query on reconnect.
- */
 export function useQueueSubscription(): QueueSubscriptionState {
   const query = useSessions();
   const queryClient = useQueryClient();

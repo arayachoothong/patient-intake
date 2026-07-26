@@ -23,10 +23,6 @@ function queryErrorMessage(error: unknown): string | null {
   return "Unable to load session";
 }
 
-/**
- * Loads a session via React Query, subscribes to session-{id}, and writes Ably
- * payloads into `sessionKeys.detail(id)` (+ list cache). Refetches on reconnect.
- */
 export function useSessionSubscription(sessionId: string): SessionSubscriptionState {
   const query = useSession(sessionId);
   const queryClient = useQueryClient();

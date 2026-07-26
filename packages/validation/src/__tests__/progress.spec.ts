@@ -19,7 +19,6 @@ describe("computeProgress", () => {
   });
 
   it("uses base+3 slots when emergencyContacts missing (stable new-session denominator)", () => {
-    // 9 required + 3 empty contact slots = 12; one filled → 8%
     expect(computeProgress({ firstName: "A" })).toBe(8);
   });
 
@@ -33,7 +32,6 @@ describe("computeProgress", () => {
   });
 
   it("grows denominator when a second contact is added", () => {
-    // one empty contact: 9/12 = 75%
     expect(
       computeProgress({
         ...filledBase,
@@ -41,7 +39,6 @@ describe("computeProgress", () => {
       }),
     ).toBe(75);
 
-    // two empty contacts: 9/15 = 60%
     expect(
       computeProgress({
         ...filledBase,

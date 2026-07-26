@@ -10,9 +10,6 @@ type FieldHighlightProps = {
   className?: string;
 };
 
-/**
- * Marks the active patient field and shows a typing indicator.
- */
 export function FieldHighlight({ active, isTyping, children, className }: FieldHighlightProps) {
   return (
     <div

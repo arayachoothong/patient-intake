@@ -1,13 +1,11 @@
 import type { Session } from "@patient/validation";
 
-/** Survives Strict Mode remounts — only one createSession mutation at a time per tab. */
 let patientSessionCreateInFlight: Promise<Session> | null = null;
 
 export function getPatientSessionCreateInFlight(): Promise<Session> | null {
   return patientSessionCreateInFlight;
 }
 
-/** @internal test helper */
 export function resetPatientSessionCreateGuard(): void {
   patientSessionCreateInFlight = null;
 }

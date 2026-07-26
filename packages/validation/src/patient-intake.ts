@@ -37,7 +37,6 @@ export const patientIntakeSchema = z.object({
   emergencyContacts: z.array(emergencyContactsItemSchema).min(1).max(3),
 });
 
-/** Live PATCH payload: incomplete emergency contacts are allowed; submit still uses full schema. */
 export const patientIntakePartialSchema = patientIntakeSchema
   .omit({ emergencyContacts: true })
   .partial()

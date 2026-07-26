@@ -19,9 +19,6 @@ const DEMOGRAPHIC_SECTIONS = FORM_SECTION_ORDER.filter(
   (section) => section !== FormSection.Emergency,
 );
 
-/**
- * Staff live detail orchestrator — query/subscription state → presentational tree.
- */
 export function PatientLiveView({ sessionId }: PatientLiveViewProps) {
   const { session, connectionState, isLoading, error } = useSessionSubscription(sessionId);
 

@@ -22,9 +22,6 @@ function rawScalarValue(data: Partial<PatientIntake>, fieldName: FieldName): str
   return "";
 }
 
-/**
- * Display string for a scalar intake field (enum/option labels when needed).
- */
 export function formatFieldDisplayValue(
   data: Partial<PatientIntake>,
   fieldName: FieldName,

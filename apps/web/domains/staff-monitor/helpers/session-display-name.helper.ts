@@ -1,8 +1,5 @@
 import type { Session } from "@patient/validation";
 
-/**
- * Display name from first/last, or "Guest" when neither is set.
- */
 export function sessionDisplayName(session: Session): string {
   const first = session.data.firstName?.trim() ?? "";
   const last = session.data.lastName?.trim() ?? "";

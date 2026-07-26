@@ -11,7 +11,6 @@ import {
 import { runPatientSessionCreateOnce } from "./patient-session-create-guard";
 
 type UsePatientSessionOptions = {
-  /** Optional RHF `reset` (or equivalent) applied when session data is ready. */
   reset?: (values: PatientFormValues) => void;
 };
 
@@ -39,11 +38,6 @@ export function usePatientSession(options: UsePatientSessionOptions = {}) {
   const createMutateRef = useRef(createMutation.mutate);
   createMutateRef.current = createMutation.mutate;
 
-  /**
-   * Replace a session the server no longer knows about (the store is in-memory,
-   * so a restart drops sessions while the tab still holds the old id).
-   * Keeps the entered form values — only the id changes.
-   */
   const recreateSession = useCallback(async () => {
     window.sessionStorage.removeItem(PATIENT_SESSION_STORAGE_KEY);
     const session = await runPatientSessionCreateOnce(createMutateRef.current);
@@ -61,7 +55,6 @@ export function usePatientSession(options: UsePatientSessionOptions = {}) {
   useEffect(() => {
     if (storedId === undefined || !bootstrapping) return;
 
-    // No stored session → create (module guard prevents Strict Mode double-create)
     if (storedId === null) {
       const persistedId = window.sessionStorage.getItem(PATIENT_SESSION_STORAGE_KEY);
       if (persistedId) {
@@ -93,7 +86,6 @@ export function usePatientSession(options: UsePatientSessionOptions = {}) {
       return;
     }
 
-    // Stored id → wait for useSession
     if (existingQuery.isPending) return;
 
     if (existingQuery.isError) {
