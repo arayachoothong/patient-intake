@@ -24,12 +24,12 @@ export function SuccessNextSteps({ onStartAnother }: SuccessNextStepsProps) {
         </li>
         <li className="rounded-2xl bg-stone-100 px-5 py-4 text-sm leading-6 text-stone-700">
           <span className="mr-2 font-semibold text-stone-700">2.</span>
-          Front desk already has your intake
+          Keep your check-in code available
         </li>
       </ol>
 
       <div className="mt-7 flex flex-col gap-3 border-t border-stone-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-stone-500">Need help? The front desk is ready for you.</p>
+        <p className="text-sm text-stone-500">Need help? Ask a clinic team member.</p>
         <Button type="button" variant="outline" onClick={onStartAnother}>
           Start another check-in
         </Button>

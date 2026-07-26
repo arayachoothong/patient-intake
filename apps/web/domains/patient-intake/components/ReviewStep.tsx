@@ -2,7 +2,7 @@
 
 import React, { type ReactNode } from "react";
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@patient/ui";
-import { IntakeStep } from "@patient/validation";
+import { formatGenderLabel, formatLanguageLabel, IntakeStep } from "@patient/validation";
 import type { PatientFormValues } from "../interfaces/patient-form.interface";
 
 type ReviewStepProps = {
@@ -40,8 +40,8 @@ function ReviewGroup({ title, step, goTo, children }: ReviewGroupProps) {
 function ReviewValue({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">{label}</dt>
-      <dd className="mt-1 text-sm text-slate-900">{value || "—"}</dd>
+      <dt className="text-muted-foreground text-xs font-medium uppercase tracking-wide">{label}</dt>
+      <dd className="text-foreground mt-1 text-sm">{value || "—"}</dd>
     </div>
   );
 }
@@ -52,8 +52,8 @@ export function ReviewStep({ values, goTo }: ReviewStepProps) {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-xl font-semibold text-slate-900">Review your information</h2>
-        <p className="mt-1 text-sm text-slate-600">
+        <h2 className="text-foreground text-xl font-semibold">Review your information</h2>
+        <p className="text-muted-foreground mt-1 text-sm">
           Confirm these details before submitting your intake.
         </p>
       </div>
@@ -62,7 +62,7 @@ export function ReviewStep({ values, goTo }: ReviewStepProps) {
         <dl className="grid gap-4 sm:grid-cols-2">
           <ReviewValue label="Name" value={fullName} />
           <ReviewValue label="Date of birth" value={values.dateOfBirth} />
-          <ReviewValue label="Gender" value={values.gender} />
+          <ReviewValue label="Gender" value={formatGenderLabel(values.gender)} />
         </dl>
       </ReviewGroup>
 
@@ -78,7 +78,10 @@ export function ReviewStep({ values, goTo }: ReviewStepProps) {
 
       <ReviewGroup title="Preferences" step={IntakeStep.Preferences} goTo={goTo}>
         <dl className="grid gap-4 sm:grid-cols-3">
-          <ReviewValue label="Preferred language" value={values.preferredLanguage} />
+          <ReviewValue
+            label="Preferred language"
+            value={formatLanguageLabel(values.preferredLanguage)}
+          />
           <ReviewValue label="Nationality" value={values.nationality} />
           <ReviewValue label="Religion" value={values.religion} />
         </dl>

@@ -1,4 +1,5 @@
-import type { PatientIntake } from "@patient/validation";
+import React from "react";
+import { formatGenderLabel, formatLanguageLabel, type PatientIntake } from "@patient/validation";
 
 type SuccessReceiptProps = {
   data: Partial<PatientIntake>;
@@ -51,8 +52,12 @@ export function SuccessReceipt({ data, submittedAt }: SuccessReceiptProps) {
       <dl className="grid gap-x-10 gap-y-4 sm:grid-cols-2">
         <ReceiptField label="Full name" value={fullName} />
         <ReceiptField label="Date of birth" value={data.dateOfBirth} />
+        <ReceiptField label="Gender" value={data.gender && formatGenderLabel(data.gender)} />
         <ReceiptField label="Phone" value={data.phoneNumber} />
-        <ReceiptField label="Preferred language" value={data.preferredLanguage} />
+        <ReceiptField
+          label="Preferred language"
+          value={data.preferredLanguage && formatLanguageLabel(data.preferredLanguage)}
+        />
         <ReceiptField
           className="sm:col-span-2"
           label={`Emergency contacts (${contacts.length})`}

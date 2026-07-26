@@ -13,11 +13,11 @@ describe("ReviewStep", () => {
           middleName: "",
           lastName: "Lovelace",
           dateOfBirth: "1815-12-10",
-          gender: Gender.Female,
+          gender: Gender.PreferNotToSay,
           phoneNumber: "+66812345678",
           email: "ada@example.com",
           address: "12 St James Square",
-          preferredLanguage: "English",
+          preferredLanguage: "en",
           nationality: "British",
           religion: "",
           emergencyContacts: [
@@ -35,6 +35,9 @@ describe("ReviewStep", () => {
     expect(markup).toContain("Ada");
     expect(markup).toContain("ada@example.com");
     expect(markup).toContain("Charles Babbage");
+    expect(markup).toContain("Prefer Not To Say");
+    expect(markup).toContain("English");
+    expect(markup).not.toContain("prefer_not_to_say");
     expect(markup).not.toContain("<input");
     expect(markup.match(/>Edit</g)).toHaveLength(4);
   });

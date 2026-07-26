@@ -11,8 +11,6 @@ import { FrontDeskCue } from "./FrontDeskCue";
 import { SuccessNextSteps } from "./SuccessNextSteps";
 import { SuccessReceipt } from "./SuccessReceipt";
 
-const FORM_STEP_STORAGE_KEY = "patient-intake:formStep";
-
 function SuccessLoadingState() {
   return (
     <div className="space-y-7 py-10" role="status" aria-label="Loading your check-in receipt">
@@ -45,7 +43,6 @@ export function SuccessPage() {
 
   const startAnotherCheckIn = useCallback(() => {
     window.sessionStorage.removeItem(PATIENT_SESSION_STORAGE_KEY);
-    window.sessionStorage.removeItem(FORM_STEP_STORAGE_KEY);
     router.push("/");
   }, [router]);
 
@@ -72,7 +69,7 @@ export function SuccessPage() {
             You’re checked in
           </h1>
           <p className="mt-3 max-w-lg text-base leading-7 text-stone-600">
-            Your details are with the front desk. Keep this page handy while you wait.
+            Keep this page handy while you wait.
           </p>
           <FrontDeskCue status={session.status} />
           <div className="mt-7 inline-flex items-center rounded-full border border-amber-300/70 bg-white/75 px-4 py-2 font-mono text-sm tracking-wide text-stone-700">

@@ -96,7 +96,7 @@ If the GitHub integration is connected, pushes to `main` redeploy automatically.
 ## Core behavior (included)
 
 - Progress percentage from required fields (denominator grows with emergency contact count)
-- Five-step patient intake with per-step validation, saved-step resume, Review edit links, and sticky navigation actions
+- Five-step patient intake with per-step validation, Review edit links, and sticky navigation actions
 - Emergency contacts as an **array** (`emergencyContacts`: 1–3 items; each `name`, `relation`, `phone` required on submit)
 - Patient add/remove contacts (never below 1, max 3); staff detail lists the same array live
 - Successful submit redirects to `/success` with a receipt, display-only check-in code, front-desk cue, and next steps

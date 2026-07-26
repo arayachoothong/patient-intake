@@ -1,10 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { INTAKE_STEP_ORDER, IntakeStep } from "@patient/validation";
 import { nextStep, prevStep, stepIndex } from "../helpers/step-navigation.helper";
-
-const FORM_STEP_STORAGE_KEY = "patient-intake:formStep";
 
 type UseIntakeStepsOptions = {
   initialStep?: IntakeStep;
@@ -16,10 +14,6 @@ export function useIntakeSteps({
   onSubmitReview,
 }: UseIntakeStepsOptions) {
   const [step, setStep] = useState<IntakeStep>(initialStep);
-
-  useEffect(() => {
-    window.sessionStorage.setItem(FORM_STEP_STORAGE_KEY, step);
-  }, [step]);
 
   const goNext = useCallback(async () => {
     const next = nextStep(step);

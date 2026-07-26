@@ -42,17 +42,17 @@ Route groups `(patient)` and `(staff)` do not appear in URLs. Pages import domai
 
 ### Patient vs staff UX
 
-| Surface                            | Layout                                   | Experience                                                                                                                                                                                                                                                    |
-| ---------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Patient** `(patient)/layout.tsx` | Warm check-in chrome, form-focused width | `/` presents Personal → Contact → Preferences → Emergency → Review with per-step validation, saved-step resume, Review edit links, and 1–3 emergency contacts. Submit redirects to `/success` for the receipt, check-in code, front-desk cue, and next steps. |
-| **Staff** `(staff)/layout.tsx`     | Dark sidebar + main pane (`StaffShell`)  | Sidebar nav item **Patient**. `/staff` shows journey badges **New**, **Filling**, and **Ready** with progress and updated time. Detail mirrors live fields while filling and becomes a submitted receipt with the matching check-in code when ready.          |
+| Surface                            | Layout                                   | Experience                                                                                                                                                                                                                                                      |
+| ---------------------------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Patient** `(patient)/layout.tsx` | Warm check-in chrome, form-focused width | `/` presents Personal → Contact → Preferences → Emergency → Review with per-step validation, Review edit links, and 1–3 emergency contacts. Submit redirects to the standalone `/success` shell for the receipt, check-in code, front-desk cue, and next steps. |
+| **Staff** `(staff)/layout.tsx`     | Dark sidebar + main pane (`StaffShell`)  | Sidebar nav item **Patient**. `/staff` shows journey badges **New**, **Filling**, and **Ready** with progress and updated time. Detail mirrors live fields while filling and becomes a submitted receipt with the matching check-in code when ready.            |
 
 ### Responsive behavior
 
 | Surface           | Mobile                                                                                             | Desktop                                                        |
 | ----------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
 | **Patient**       | Compact stepper, one step at a time, full-width fields, and sticky Back/Continue or Submit actions | Readable form width with the full stepper and anchored actions |
-| **Success**       | Receipt and next steps stack vertically; check-in code remains prominent                           | Receipt content uses the wider patient shell                   |
+| **Success**       | Receipt and next steps stack vertically; check-in code remains prominent                           | Standalone warm shell uses a wider receipt width               |
 | **Staff shell**   | shadcn `Sidebar` collapses; open via `SidebarTrigger` (sheet overlay)                              | Persistent dark sidebar + main `SidebarInset`                  |
 | **Patient queue** | Journey-aware patient cards replace a squeezed table; tap opens detail                             | Full table columns: Name · Journey · Progress · Updated        |
 | **Staff detail**  | Live field cards or submitted receipt stack vertically; back link returns to Patient list          | Same content in a wider main pane                              |
@@ -63,7 +63,7 @@ No separate mobile routes — one App Router tree adapts via Tailwind + shadcn S
 
 1. Staff opens `/staff` (no authentication in v1), then the patient opens `/` in a second window on the same warm origin.
 2. `POST /api/sessions` creates a session with internal status `filling` and 0% progress; the staff queue presents that state as the journey stage **New**.
-3. The patient advances through Personal → Contact → Preferences → Emergency → Review. Each step validates before continuing; the current step is saved for resume, and Review can jump back to edit a section.
+3. The patient advances through Personal → Contact → Preferences → Emergency → Review. Each step validates before continuing, and Review can jump back to edit a section.
 4. Patient edits (including emergency contact array items) → debounced PATCH → staff queue/detail update live via Ably → React Query cache. Once progress is above 0, staff presents the journey stage **Filling**.
 5. Patient submits from Review → full Zod validation → internal `status: submitted` → redirect to `/success`, which shows the receipt and display-only check-in code. Further PATCH returns **409**.
 6. Staff presents submitted sessions as **Ready** and replaces the live detail with the submitted receipt and matching check-in code.
@@ -112,9 +112,9 @@ Form rows and staff read-only rows both iterate **`FIELD_DEFINITIONS`** from `@p
 
 Emergency contacts are rendered from the **`emergencyContacts` array** (patient `useFieldArray` + staff numbered cards), with labels from shared constants — not hard-coded static definition rows for three slots.
 
-Patient form: `PatientIntakeForm` → `StepProgress` + one section or `ReviewStep` → `StepActions` → shadcn `Form` / inputs from `@patient/ui`. `useIntakeSteps` owns step navigation and session-storage resume.
+Patient form: `PatientIntakeForm` → `StepProgress` + one section or `ReviewStep` → `StepActions` → shadcn `Form` / inputs from `@patient/ui`. `useIntakeSteps` owns step navigation.
 
-Patient success: `/success` → `SuccessPage` guards for a submitted session → `SuccessReceipt` + display-only check-in code + `FrontDeskCue` + next steps.
+Patient success: standalone `/success` shell (outside `(patient)`) → `SuccessPage` guards for a submitted session → `SuccessReceipt` + display-only check-in code + `FrontDeskCue` + next steps.
 
 Staff queue/detail: journey-stage helpers derive **New/Filling/Ready** without changing session status. `PatientLiveView` renders live section/card components + `FieldHighlight` while filling, then `SubmittedIntakeReceipt` when ready.
 
