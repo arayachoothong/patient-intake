@@ -6,7 +6,6 @@ export { PatientShellHeader } from "./components/PatientShellHeader";
 export { FormSection } from "./components/FormSection";
 export { FormBootstrapState } from "./components/FormBootstrapState";
 export { FormProgressHeader } from "./components/FormProgressHeader";
-export { SubmittedNotice } from "./components/SubmittedNotice";
 export { SubmitErrorMessage } from "./components/SubmitErrorMessage";
 export { SubmitBar } from "./components/SubmitBar";
 export { PersonalInformationSection } from "./components/PersonalInformationSection";

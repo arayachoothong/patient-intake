@@ -3,7 +3,8 @@
 import { type FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type FieldPath, useForm } from "react-hook-form";
-import { Card, CardContent, CardHeader, CardTitle, Form } from "@patient/ui";
+import { useRouter } from "next/navigation";
+import { Form } from "@patient/ui";
 import {
   intakeStepSchema,
   IntakeStep,
@@ -29,11 +30,13 @@ import { FormBootstrapState } from "./FormBootstrapState";
 import { PersonalInformationSection } from "./PersonalInformationSection";
 import { PreferencesSection } from "./PreferencesSection";
 import { ResumeBanner } from "./ResumeBanner";
+import { ReviewStep } from "./ReviewStep";
 import { StepActions } from "./StepActions";
 import { StepProgress } from "./StepProgress";
 import { SubmitErrorMessage } from "./SubmitErrorMessage";
 
 export function PatientIntakeForm() {
+  const router = useRouter();
   const [activeField, setActiveField] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [showResumeBanner, setShowResumeBanner] = useState(false);
@@ -84,6 +87,7 @@ export function PatientIntakeForm() {
     const finish = () => {
       setSubmitted(true);
       setActiveField(null);
+      router.replace("/success");
     };
 
     submitMutation.mutate(
@@ -184,16 +188,7 @@ export function PatientIntakeForm() {
         {steps.step === IntakeStep.Emergency ? (
           <EmergencyContactsSection {...sectionProps} />
         ) : null}
-        {steps.step === IntakeStep.Review ? (
-          <Card>
-            <CardHeader>
-              <CardTitle>Review your information</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-slate-600">
-              Review details will appear here before submission.
-            </CardContent>
-          </Card>
-        ) : null}
+        {steps.step === IntakeStep.Review ? <ReviewStep values={values} goTo={steps.goTo} /> : null}
 
         <SubmitErrorMessage message={errorMessage} />
         <StepActions
