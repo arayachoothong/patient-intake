@@ -1,5 +1,18 @@
 # Patient Intake + Staff Realtime Monitor
 
+## Submission
+
+|                |                                                                                              |
+| -------------- | -------------------------------------------------------------------------------------------- |
+| **Live demo**  | [https://patient-intake-seven.vercel.app](https://patient-intake-seven.vercel.app)           |
+| **Repository** | [github.com/arayachoothong/patient-intake](https://github.com/arayachoothong/patient-intake) |
+| **Patient**    | `/`                                                                                          |
+| **Staff**      | `/staff`                                                                                     |
+
+Open **patient and staff in two windows** and complete the flow in one sitting (see **Known limitation** for why).
+
+Architecture notes: [`docs/development-plan.md`](docs/development-plan.md).
+
 A Next.js monorepo demo for clinic check-in: patients complete a responsive demographics form (including **1–3 emergency contacts**) while staff watch a live **Patient** table and read-only detail view. Updates sync in near real time over **Ably** (~250ms debounced PATCHes). Shared UI and validation live in `@patient/ui` and `@patient/validation`. HTTP uses **axios** + **TanStack Query**; Ably events update the Query cache.
 
 ## Routes
@@ -64,11 +77,19 @@ Run from the repo root (Turborepo):
 
 ## Deploying on Vercel
 
-1. Import the repo; set **Root Directory** to the monorepo root (or configure Turborepo build for `apps/web`).
-2. Add the same env vars as local: `NEXT_PUBLIC_ABLY_KEY` and `ABLY_API_KEY` for Production (and Preview if you test PRs).
-3. Build command: `pnpm build` (ensure install uses `pnpm` via Corepack or Vercel’s pnpm detection).
+1. Import [arayachoothong/patient-intake](https://github.com/arayachoothong/patient-intake) into Vercel (`main`).
+2. Project settings:
+   - **Root Directory:** `apps/web`
+   - **Install Command:** `cd ../.. && pnpm install`
+   - **Build Command:** `cd ../.. && pnpm --filter web build`
+3. Environment variables (Production):
+   - `NEXT_PUBLIC_ABLY_KEY` — browser Ably (subscribe)
+   - `ABLY_API_KEY` — server publish on `staff-queue` and `session-*`
+4. Deploy. Live app: **https://patient-intake-seven.vercel.app**
 
-See **Known limitation** below before relying on a deployed demo for long-lived sessions.
+If the GitHub integration is connected, pushes to `main` redeploy automatically.
+
+**Demo tip:** keep patient and staff tabs open on the same deploy and finish the check-in without long idle gaps so the warm serverless instance retains in-memory sessions.
 
 ## Core behavior (included)
 
@@ -103,9 +124,11 @@ Automated E2E is out of scope for v1; verify manually:
 
 ## Known limitation: in-memory sessions
 
-Session data is stored in an **in-memory `Map`** in the Node process (`domains/session/infrastructure/memory-store.ts`). There is no database.
+Session state is an **in-memory `Map`** in the Node process (`apps/web/domains/session/infrastructure/memory-store.ts`). There is **no database**.
 
-On **Vercel serverless cold starts**, redeploys, or new instances, that memory is empty — active sessions disappear and the queue resets. This is an intentional tradeoff for a frontend-focused demo. For production you would add durable storage and treat Ably as a notification layer only.
+On **Vercel**, cold starts, redeploys, or multiple concurrent instances can clear that memory — the staff queue may look empty after idle time. This is **intentional** for a frontend-focused takehome (UI + Ably realtime), not a missing feature.
+
+For a reliable review: open `/` and `/staff` together and run through create → type → submit in one continuous session.
 
 ## Packages
 
